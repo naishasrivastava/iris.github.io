@@ -20,12 +20,13 @@
             line-height: 1.6;
             padding: 1rem;
             min-height: 100vh;
+            overflow-y: auto;
         }
 
         .container {
             max-width: 1400px;
             margin: 0 auto;
-            height: calc(100vh - 2rem);
+            min-height: calc(100vh - 2rem);
             display: flex;
             flex-direction: column;
         }
@@ -44,9 +45,9 @@
             grid-template-columns: 400px 1fr;
             gap: 1.5rem;
             flex: 1;
-            overflow: hidden;
-            min-height: 0;
+            min-height: 600px;
             align-items: start;
+            margin-bottom: 2rem;
         }
 
         .controls-panel {
@@ -293,6 +294,15 @@
                 <!-- P5.js canvas will be inserted here -->
             </div>
         </div>
+
+        <footer>
+            <div class="footer-links">
+                <a href="https://www.linkedin.com/in/naishasrivastava" target="_blank" rel="noopener noreferrer" class="linkedin">linkedin</a>
+                <a href="index.html" class="portfolio">portfolio</a>
+                <a href="mailto:ns2229@cornell.edu" class="email">email</a>
+            </div>
+            <p class="copyright">© 2025 naisha srivastava</p>
+        </footer>
     </div>
 
     <script>
@@ -311,8 +321,8 @@
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
             { name: "dandelion", url: "dandelion.mp3" },
-            { name: "getup", url: "getup.mp3" },
-            { name: "nights", url: "nights.mp3" }
+            { name: "get up", url: "getup.mp3" },
+            { name: "nights like this", url: "nights.mp3" }
         ];
 
         // Wait for p5.sound to load
@@ -322,16 +332,19 @@
 
         function setup() {
             let container = document.getElementById('canvasContainer');
-            let containerSize = min(container.clientWidth, container.clientHeight) - 32;
-            
-            let canvas = createCanvas(containerSize, containerSize);
-            canvas.parent('canvasContainer');
-            layer = createGraphics(width, height);
-            fft = new p5.FFT(0, 256);
-            frameRate(60);
-            loop();
-            
-            userStartAudio();
+            // Wait for container to be rendered
+            setTimeout(() => {
+                let containerSize = min(container.clientWidth, container.clientHeight) - 32;
+                
+                let canvas = createCanvas(containerSize, containerSize);
+                canvas.parent('canvasContainer');
+                layer = createGraphics(width, height);
+                fft = new p5.FFT(0, 256);
+                frameRate(60);
+                loop();
+                
+                userStartAudio();
+            }, 100);
 
             // Color pickers
             document.getElementById('irisColor').addEventListener('input', (e) => {
