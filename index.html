@@ -416,6 +416,7 @@
         let irisColor = { r: 110, g: 166, b: 255 };
         let bgColor = { r: 0, g: 0, b: 0 };
         let playPauseBtn;
+        let waveformColor = 255; // white or black for contrast
 
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
@@ -454,6 +455,9 @@
             document.getElementById('bgColor').addEventListener('input', (e) => {
                 bgColor = hexToRgb(e.target.value);
                 document.getElementById('canvasContainer').style.backgroundColor = e.target.value;
+                // Calculate contrast for waveform color
+                const brightness = (bgColor.r * 299 + bgColor.g * 587 + bgColor.b * 114) / 1000;
+                waveformColor = brightness > 128 ? 0 : 255; // black if light bg, white if dark bg
                 redraw();
             });
 
@@ -491,11 +495,11 @@
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Live spectrum visualization (white waveform)
+            // Live spectrum visualization (contrasting waveform)
             push();
             translate(width / 2, height / 2);
             noFill();
-            stroke(255);
+            stroke(waveformColor);
             strokeWeight(1);
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
@@ -510,6 +514,7 @@
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
+                
                 layer.push();
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
@@ -519,6 +524,8 @@
                     layer.line(0, i, 0, i);
                 }
                 layer.pop();
+                
+                image(layer, -width / 2, -height / 2);
                 pop();
 
                 if (angle >= 361 || current >= d) {
@@ -528,9 +535,9 @@
                     isFinished = true;
                     playPauseBtn.textContent = 'play';
                 }
+            } else {
+                image(layer, 0, 0);
             }
-            
-            image(layer, 0, 0);
         }
 
         function handlePlayPause() {
