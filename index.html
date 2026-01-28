@@ -39,17 +39,8 @@
             font-weight: 900;
             text-transform: lowercase;
             color: #78350f;
-            margin-bottom: 0.5rem;
-            text-align: center;
-        }
-
-        .subtitle {
-            text-align: center;
-            font-size: 1rem;
-            color: #92400e;
             margin-bottom: 2rem;
-            text-transform: lowercase;
-            font-weight: 600;
+            text-align: center;
         }
 
         .main-layout {
@@ -68,11 +59,14 @@
             flex-direction: column;
             gap: 1.5rem;
             height: fit-content;
+            overflow: visible;
         }
 
         .control-section {
             padding-bottom: 1.5rem;
+            padding-top: 0.25rem;
             border-bottom: 2px solid #fef3c7;
+            overflow: visible;
         }
 
         .control-section:last-child {
@@ -149,7 +143,18 @@
         }
 
         .btn-secondary:hover {
-            background: #fef3c7;
+            background: #fff4ca;
+            color: #78350f;
+        }
+
+        .btn.reset-btn:hover {
+            background: #fff4ca;
+            color: #78350f;
+        }
+
+        .btn.save-btn:hover {
+            background: #fff4ca;
+            color: #78350f;
         }
 
         .btn-surprise {
@@ -165,9 +170,10 @@
 
         .file-input-wrapper {
             position: relative;
-            overflow: hidden;
+            overflow: visible;
             display: inline-block;
             width: 100%;
+            margin-top: 0.25rem;
         }
 
         .file-input-wrapper input[type=file] {
@@ -191,8 +197,10 @@
         }
 
         .file-input-label:hover {
-            background: #fef3c7;
+            background: #fff4ca;
+            color: #78350f;
             transform: translateY(-2px);
+            box-shadow: 4px 4px 0px rgba(120, 53, 15, 0.2);
         }
 
         .song-name {
@@ -208,11 +216,19 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            padding: 0;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             background: #000000;
-            min-height: 550px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        #defaultCanvas0 {
+            display: block;
+            margin: 0 auto;
+            width: 100% !important;
+            height: 100% !important;
         }
 
         footer {
@@ -221,7 +237,7 @@
             padding: 2rem;
             text-align: center;
             width: 100%;
-            margin-top: auto;
+            margin-top: 2rem;
         }
 
         .contact-links {
@@ -275,11 +291,12 @@
 
         @media (max-width: 768px) {
             .container {
-                padding: 0.75rem;
+                padding: 1rem;
             }
 
             h1 {
                 font-size: 2.5rem;
+                margin-bottom: 1.5rem;
             }
 
             .main-layout {
@@ -287,21 +304,33 @@
                 gap: 1rem;
             }
 
+            .controls-panel {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .control-section {
+                padding-bottom: 1rem;
+            }
+
             .canvas-container {
-                padding: 0.5rem;
-                min-height: auto;
+                padding: 0;
+                width: 100%;
             }
 
             .contact-links {
                 flex-direction: column;
-                align-items: center;
+                align-items: stretch;
                 gap: 1rem;
             }
 
             .contact-btn {
-                width: 80%;
-                max-width: 300px;
+                width: 100%;
                 justify-content: center;
+            }
+
+            footer {
+                padding: 1.5rem 1rem;
             }
         }
     </style>
@@ -309,7 +338,6 @@
 <body>
     <div class="container">
         <h1>irisgram</h1>
-        <p class="subtitle">create rotating circular visualizations from audio</p>
         
         <div class="main-layout">
             <div class="controls-panel" id="controlsPanel">
@@ -342,13 +370,13 @@
                 <div class="control-section">
                     <h3>controls</h3>
                     <button class="btn" id="playPauseBtn" onclick="handlePlayPause()" disabled>play</button>
-                    <button class="btn btn-secondary" onclick="resetSketch()">reset</button>
+                    <button class="btn btn-secondary reset-btn" onclick="resetSketch()">reset</button>
                 </div>
 
                 <div class="control-section">
                     <h3>save</h3>
-                    <button class="btn btn-secondary" onclick="saveTransparent()">transparent bg</button>
-                    <button class="btn btn-secondary" onclick="saveWithBg()">with background</button>
+                    <button class="btn btn-secondary save-btn" onclick="saveTransparent()">transparent</button>
+                    <button class="btn btn-secondary save-btn" onclick="saveWithBg()">with background</button>
                 </div>
             </div>
 
@@ -365,7 +393,7 @@
                 <span>email</span>
             </a>
             <a href="index.html" class="contact-btn portfolio">
-                <span>→</span>
+                <span>★</span>
                 <span>portfolio</span>
             </a>
             <a href="https://www.linkedin.com/in/naishasrivastava" target="_blank" class="contact-btn linkedin">
@@ -392,14 +420,25 @@
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
             { name: "dandelion", url: "dandelion.mp3" },
-            { name: "getup", url: "getup.mp3" },
-            { name: "nights", url: "nights.mp3" }
+            { name: "get up", url: "getup.mp3" },
+            { name: "nights like this", url: "nights.mp3" }
         ];
 
         function setup() {
-            let canvas = createCanvas(550, 550);
+            // Calculate canvas size to fill container
+            let canvasSize = 550;
+            if (windowWidth <= 768) {
+                canvasSize = min(windowWidth - 40, 500);
+            }
+            
+            let canvas = createCanvas(canvasSize, canvasSize);
             canvas.parent('canvasContainer');
-            layer = createGraphics(width, height);
+            
+            // Set canvas to fill container
+            canvas.style('width', '100%');
+            canvas.style('height', '100%');
+            
+            layer = createGraphics(canvasSize, canvasSize);
             fft = new p5.FFT(0, 256);
             frameRate(60);
             noLoop();
@@ -415,6 +454,7 @@
             document.getElementById('bgColor').addEventListener('input', (e) => {
                 bgColor = hexToRgb(e.target.value);
                 document.getElementById('canvasContainer').style.backgroundColor = e.target.value;
+                redraw();
             });
 
             // File input event listener
@@ -426,15 +466,21 @@
             }, 1000 / 60);
         }
 
+        function windowResized() {
+            let canvasSize = 550;
+            if (windowWidth <= 768) {
+                canvasSize = min(windowWidth - 40, 500);
+            }
+            resizeCanvas(canvasSize, canvasSize);
+            layer = createGraphics(canvasSize, canvasSize);
+            redraw();
+        }
+
         function draw() {
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
                 image(layer, 0, 0);
-                fill(255);
-                textAlign(CENTER, CENTER);
-                textSize(16);
-                text('waiting for audio...', width / 2, height / 2);
                 return;
             }
 
