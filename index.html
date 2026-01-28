@@ -18,49 +18,73 @@
             background-color: #fffbeb;
             color: #78350f;
             line-height: 1.6;
-            padding: 1rem;
+            padding: 1.5rem;
             min-height: 100vh;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.75rem;
+            }
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
-            min-height: calc(100vh - 2rem);
+            flex: 1;
             display: flex;
             flex-direction: column;
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 900;
             text-transform: lowercase;
             color: #78350f;
-            margin-bottom: 0.75rem;
+            margin-bottom: 1rem;
             text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 0.5rem;
+            }
         }
 
         .main-layout {
             display: grid;
-            grid-template-columns: 400px 400px;
+            grid-template-columns: 280px 1fr;
             gap: 1.5rem;
-            justify-content: center;
-            flex: 1;
-            min-height: 600px;
-            align-items: start;
             margin-bottom: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                gap: 1rem;
+            }
         }
 
         .controls-panel {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             display: flex;
             flex-direction: column;
             gap: 1rem;
-            height: 400px;
-            overflow-y: auto;
+            height: fit-content;
+        }
+
+        @media (max-width: 768px) {
+            .controls-panel {
+                padding: 1rem;
+                gap: 1rem;
+            }
         }
 
         .control-section {
@@ -163,7 +187,7 @@
 
         .file-input-label {
             display: block;
-            padding: 0.5rem 0.75rem;
+            padding: 0.6rem 0.8rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
@@ -172,7 +196,7 @@
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
         }
 
         .file-input-label:hover {
@@ -180,10 +204,10 @@
         }
 
         .song-name {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #92400e;
             text-align: center;
-            margin-top: 0.4rem;
+            margin-top: 0.5rem;
             font-weight: 600;
         }
 
@@ -191,45 +215,75 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1rem;
+            padding: 1.5rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
-            overflow: hidden;
-            width: 400px;
-            height: 400px;
+            background: #000000;
+            aspect-ratio: 1 / 1;
         }
 
-        @media (max-width: 1024px) {
-            body {
-                padding: 0.5rem;
-                min-height: auto;
-            }
-
-            .container {
-                height: auto;
-            }
-
-            h1 {
-                font-size: 1.75rem;
-                margin-bottom: 0.5rem;
-            }
-
-            .main-layout {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .controls-panel {
-                padding: 1rem;
-                height: auto;
-            }
-
+        @media (max-width: 768px) {
             .canvas-container {
                 padding: 0.5rem;
-                width: 100%;
-                height: auto;
-                aspect-ratio: 1;
+                aspect-ratio: 1 / 1;
             }
+        }
+
+        footer {
+            background: white;
+            border-top: 2px solid #78350f;
+            padding: 2rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer p {
+            color: #92400e;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-links {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem 2rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            text-decoration: none;
+            border: 2px solid #78350f;
+            transition: all 0.3s;
+            box-shadow: 4px 4px 0px rgba(120, 53, 15, 0.2);
+        }
+
+        .contact-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.25);
+        }
+
+        .contact-btn.email {
+            background: #2563eb;
+            color: white;
+        }
+
+        .contact-btn.portfolio {
+            background: #78350f;
+            color: white;
+        }
+
+        .contact-btn.linkedin {
+            background: #fef3c7;
+            color: #78350f;
         }
     </style>
 </head>
@@ -238,7 +292,7 @@
         <h1>irisgram</h1>
         
         <div class="main-layout">
-            <div class="controls-panel">
+            <div class="controls-panel" id="controlsPanel">
                 <div class="control-section">
                     <h3>colors</h3>
                     <div class="color-picker-group">
@@ -274,7 +328,7 @@
                 <div class="control-section">
                     <h3>save</h3>
                     <button class="btn btn-secondary" onclick="saveTransparent()">transparent</button>
-                    <button class="btn btn-secondary" onclick="saveWithBg()">with background</button>
+                    <button class="btn btn-secondary" onclick="with background">with background</button>
                 </div>
             </div>
 
@@ -282,16 +336,22 @@
                 <!-- P5.js canvas will be inserted here -->
             </div>
         </div>
-
-        <footer>
-            <div class="footer-links">
-                <a href="https://www.linkedin.com/in/naishasrivastava" target="_blank" rel="noopener noreferrer" class="linkedin">linkedin</a>
-                <a href="index.html" class="portfolio">portfolio</a>
-                <a href="mailto:ns2229@cornell.edu" class="email">email</a>
-            </div>
-            <p class="copyright">© 2025 naisha srivastava</p>
-        </footer>
     </div>
+
+    <footer>
+        <div class="contact-links">
+            <a href="mailto:your.email@example.com" class="contact-btn email">
+                email
+            </a>
+            <a href="https://yourportfolio.com" target="_blank" class="contact-btn portfolio">
+                portfolio
+            </a>
+            <a href="https://linkedin.com/in/yourprofile" target="_blank" class="contact-btn linkedin">
+                linkedin
+            </a>
+        </div>
+        <p>© 2025 naisha srivastava</p>
+    </footer>
 
     <script>
         let song;
@@ -309,63 +369,62 @@
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
             { name: "dandelion", url: "dandelion.mp3" },
-            { name: "get up", url: "getup.mp3" },
-            { name: "nights like this", url: "nights.mp3" }
+            { name: "getup", url: "getup.mp3" },
+            { name: "nights", url: "nights.mp3" }
         ];
 
-        // Wait for p5.sound to load
         function preload() {
             // This ensures p5.sound is ready
         }
 
         function setup() {
-            let container = document.getElementById('canvasContainer');
-            // Wait for container to be rendered
+            // Calculate canvas size based on controls panel height
             setTimeout(() => {
-                let containerSize = min(container.clientWidth, container.clientHeight) - 32;
-                
-                let canvas = createCanvas(containerSize, containerSize);
+                const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
+                const canvasSize = controlsHeight;
+                let canvas = createCanvas(canvasSize, canvasSize);
                 canvas.parent('canvasContainer');
                 layer = createGraphics(width, height);
                 fft = new p5.FFT(0, 256);
                 frameRate(60);
-                loop();
-                
-                userStartAudio();
+                getAudioContext().suspend();
+
+                // Color pickers
+                document.getElementById('irisColor').addEventListener('input', (e) => {
+                    const hex = e.target.value;
+                    irisColor = hexToRgb(hex);
+                });
+
+                document.getElementById('bgColor').addEventListener('input', (e) => {
+                    const hex = e.target.value;
+                    bgColor = hexToRgb(hex);
+                    document.getElementById('canvasContainer').style.backgroundColor = hex;
+                });
+
+                // File upload
+                document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+                // Set initial canvas container background
+                document.getElementById('canvasContainer').style.backgroundColor = '#000000';
             }, 100);
-
-            // Color pickers
-            document.getElementById('irisColor').addEventListener('input', (e) => {
-                const hex = e.target.value;
-                irisColor = hexToRgb(hex);
-            });
-
-            document.getElementById('bgColor').addEventListener('input', (e) => {
-                const hex = e.target.value;
-                bgColor = hexToRgb(hex);
-                document.getElementById('canvasContainer').style.backgroundColor = hex;
-            });
-
-            // File upload
-            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-
-            // Set initial canvas container background
-            document.getElementById('canvasContainer').style.backgroundColor = '#000000';
         }
 
         function windowResized() {
-            let container = document.getElementById('canvasContainer');
-            let containerSize = min(container.clientWidth, container.clientHeight) - 32;
-            
-            resizeCanvas(containerSize, containerSize);
-            let oldLayer = layer;
-            layer = createGraphics(width, height);
-            if (oldLayer) {
-                layer.image(oldLayer, 0, 0, width, height);
+            // On desktop: match controls height, on mobile: just keep it square
+            if (windowWidth > 768) {
+                const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
+                const canvasSize = controlsHeight;
+                resizeCanvas(canvasSize, canvasSize);
+            } else {
+                // On mobile, maintain current square size
+                const currentSize = width;
+                resizeCanvas(currentSize, currentSize);
             }
+            layer = createGraphics(width, height);
         }
 
         function draw() {
+            // Always update background color
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
@@ -380,14 +439,11 @@
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Calculate contrast for white/black line
-            let brightness = (bgColor.r * 299 + bgColor.g * 587 + bgColor.b * 114) / 1000;
-            let lineColor = brightness > 128 ? 0 : 255;
-
+            // Draw live spectrum visualization
             push();
             translate(width / 2, height / 2);
             noFill();
-            stroke(lineColor);
+            stroke(255);
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
                 let a = spectrum[i];
@@ -396,6 +452,7 @@
             endShape();
             pop();
 
+            // Draw iris pattern
             if (isPlaying && angle <= 361) {
                 push();
                 translate(width / 2, height / 2);
@@ -432,7 +489,9 @@
 
             if (isFinished) return;
 
-            userStartAudio();
+            if (getAudioContext().state !== 'running') {
+                getAudioContext().resume();
+            }
 
             if (!isPlaying && !isPaused) {
                 angle = 0;
@@ -464,12 +523,10 @@
         }
 
         function saveTransparent() {
-            let exportLayer = createGraphics(width, height);
-            exportLayer.image(layer, 0, 0);
-            save(exportLayer, 'irisgram.png');
+            save(layer, 'irisgram.png');
         }
 
-        function saveWithBg() {
+        function saveBlack() {
             let bgLayer = createGraphics(width, height);
             bgLayer.background(bgColor.r, bgColor.g, bgColor.b);
             bgLayer.image(layer, 0, 0);
@@ -477,11 +534,14 @@
         }
 
         function handleFileSelect(event) {
+            if (typeof loadSound === 'undefined') {
+                alert('audio library not loaded yet. please wait a moment and try again.');
+                return;
+            }
             const file = event.target.files[0];
             if (file) {
                 if (!file.type.includes('audio')) {
                     alert('please select an audio file (mp3, wav, etc.)');
-                    event.target.value = '';
                     return;
                 }
                 resetSketch();
@@ -490,9 +550,7 @@
                 }
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
-                
-                loadSound(fileURL, (loadedSong) => {
-                    song = loadedSong;
+                song = loadSound(fileURL, () => {
                     currentSongName = file.name;
                     document.getElementById('songName').textContent = file.name;
                 }, (err) => {
@@ -504,21 +562,23 @@
         }
 
         function surpriseMe() {
+            if (typeof loadSound === 'undefined') {
+                alert('audio library not loaded yet. please wait a moment and try again.');
+                return;
+            }
             resetSketch();
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             if (song) {
                 song.stop();
             }
             document.getElementById('songName').textContent = 'loading...';
-            
-            loadSound(randomSong.url, (loadedSong) => {
-                song = loadedSong;
+            song = loadSound(randomSong.url, () => {
                 currentSongName = randomSong.name;
                 document.getElementById('songName').textContent = randomSong.name;
             }, (err) => {
                 console.error('Failed to load song:', err);
                 document.getElementById('songName').textContent = 'failed to load';
-                alert('failed to load song. please check that the audio files are in the same folder!');
+                alert('failed to load song. please try uploading your own!');
             });
         }
 
