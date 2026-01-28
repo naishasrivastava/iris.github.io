@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Irisgram - Audio Visualizer</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/addons/p5.sound.js"></script>
     <style>
         * {
             margin: 0;
@@ -21,6 +21,12 @@
             padding: 1.5rem;
             height: 100vh;
             overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 0.75rem;
+            }
         }
 
         .container {
@@ -40,27 +46,49 @@
             text-align: center;
         }
 
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+
         .main-layout {
             display: grid;
-            grid-template-columns: 280px 1fr;
+            grid-template-columns: 240px 1fr;
             gap: 1.5rem;
             flex: 1;
             overflow: hidden;
         }
 
+        @media (max-width: 768px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                gap: 1rem;
+            }
+        }
+
         .controls-panel {
             background: white;
-            padding: 1.5rem;
+            padding: 1rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
+            gap: 1rem;
+            height: fit-content;
+        }
+
+        @media (max-width: 768px) {
+            .controls-panel {
+                padding: 1rem;
+                gap: 1rem;
+            }
         }
 
         .control-section {
-            padding-bottom: 1.5rem;
+            padding-bottom: 1rem;
             border-bottom: 2px solid #fef3c7;
         }
 
@@ -70,15 +98,15 @@
         }
 
         .control-section h3 {
-            font-size: 1rem;
+            font-size: 0.875rem;
             font-weight: 900;
             text-transform: lowercase;
             color: #1d4ed8;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .color-picker-group {
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .color-picker-group:last-child {
@@ -87,16 +115,16 @@
 
         .color-picker-group label {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: lowercase;
             color: #78350f;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.3rem;
         }
 
         .color-picker {
             width: 100%;
-            height: 40px;
+            height: 35px;
             border: 2px solid #78350f;
             border-radius: 4px;
             cursor: pointer;
@@ -104,15 +132,15 @@
 
         .btn {
             width: 100%;
-            padding: 0.6rem 0.8rem;
+            padding: 0.5rem 0.75rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
             background: #2563eb;
             color: white;
             cursor: pointer;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.8rem;
             transition: all 0.3s;
         }
 
@@ -137,7 +165,7 @@
         .btn-surprise {
             background: linear-gradient(135deg, #5C81F6 0%, #9B87F5 100%);
             border: 2px solid #78350f;
-            font-size: 1rem;
+            font-size: 0.9rem;
             margin-bottom: 0;
         }
 
@@ -159,7 +187,7 @@
 
         .file-input-label {
             display: block;
-            padding: 0.6rem 0.8rem;
+            padding: 0.5rem 0.75rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
@@ -168,7 +196,7 @@
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
         }
 
         .file-input-label:hover {
@@ -176,10 +204,10 @@
         }
 
         .song-name {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #92400e;
             text-align: center;
-            margin-top: 0.5rem;
+            margin-top: 0.4rem;
             font-weight: 600;
         }
 
@@ -187,11 +215,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: white;
             padding: 1.5rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        @media (max-width: 768px) {
+            .canvas-container {
+                padding: 0.5rem;
+            }
         }
 
         @media (max-height: 800px) {
@@ -232,7 +266,7 @@
                 <div class="control-section">
                     <h3>upload song</h3>
                     <div class="file-input-wrapper">
-                        <input type="file" id="fileInput" accept="audio/*">
+                        <input type="file" id="fileInput" accept="audio/mp3,audio/mpeg,audio/wav,audio/*">
                         <label for="fileInput" class="file-input-label">choose file</label>
                     </div>
                     <div class="song-name" id="songName">no song loaded</div>
@@ -252,7 +286,7 @@
                 <div class="control-section">
                     <h3>save</h3>
                     <button class="btn btn-secondary" onclick="saveTransparent()">transparent</button>
-                    <button class="btn btn-secondary" onclick="saveBlack()">black bg</button>
+                    <button class="btn btn-secondary" onclick="saveBlack()">with background</button>
                 </div>
             </div>
 
@@ -282,44 +316,64 @@
             { name: "nights", url: "nights.mp3" }
         ];
 
+        // Wait for p5.sound to load
+        function preload() {
+            // This ensures p5.sound is ready
+        }
+
         function setup() {
-            let canvas = createCanvas(550, 550);
+            // Make canvas responsive
+            let canvasSize = min(550, windowWidth - 100, windowHeight - 200);
+            if (windowWidth <= 768) {
+                canvasSize = min(windowWidth - 30, windowHeight * 0.6);
+            }
+            let canvas = createCanvas(canvasSize, canvasSize);
             canvas.parent('canvasContainer');
             layer = createGraphics(width, height);
             fft = new p5.FFT(0, 256);
             frameRate(60);
-            noLoop();
+            loop(); // Change to loop instead of noLoop
             getAudioContext().suspend();
 
             // Color pickers
             document.getElementById('irisColor').addEventListener('input', (e) => {
                 const hex = e.target.value;
                 irisColor = hexToRgb(hex);
+                if (!isPlaying) redraw();
             });
 
             document.getElementById('bgColor').addEventListener('input', (e) => {
                 const hex = e.target.value;
                 bgColor = hexToRgb(hex);
+                // Update canvas container background in real-time
+                document.getElementById('canvasContainer').style.backgroundColor = hex;
+                if (!isPlaying) redraw();
             });
 
             // File upload
             document.getElementById('fileInput').addEventListener('change', handleFileSelect);
 
-            setInterval(() => {
-                if (isPlaying) redraw();
-            }, 1000 / 60);
+            // Set initial canvas container background
+            document.getElementById('canvasContainer').style.backgroundColor = '#000000';
+        }
+
+        function windowResized() {
+            let canvasSize = min(550, windowWidth - 100, windowHeight - 200);
+            if (windowWidth <= 768) {
+                canvasSize = min(windowWidth - 30, windowHeight * 0.6);
+            }
+            resizeCanvas(canvasSize, canvasSize);
+            layer = createGraphics(width, height);
+            redraw();
         }
 
         function draw() {
+            // Always update background color
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
-                push();
-                fill(255);
-                textAlign(CENTER, CENTER);
-                textSize(16);
-                text('load a song to begin', width / 2, height / 2);
-                pop();
+                // Just show the layer without text
+                image(layer, 0, 0);
                 return;
             }
 
@@ -330,10 +384,14 @@
 
             let spectrum = fft.analyze().reverse().slice(40);
 
+            // Calculate contrast for white/black line
+            let brightness = (bgColor.r * 299 + bgColor.g * 587 + bgColor.b * 114) / 1000;
+            let lineColor = brightness > 128 ? 0 : 255;
+
             push();
             translate(width / 2, height / 2);
             noFill();
-            stroke(255);
+            stroke(lineColor);
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
                 let a = spectrum[i];
@@ -418,27 +476,45 @@
 
         function saveBlack() {
             let bgLayer = createGraphics(width, height);
-            bgLayer.background(0);
+            bgLayer.background(bgColor.r, bgColor.g, bgColor.b);
             bgLayer.image(layer, 0, 0);
-            save(bgLayer, 'irisgram_blackbg.png');
+            save(bgLayer, 'irisgram_withbg.png');
         }
 
         function handleFileSelect(event) {
+            if (typeof loadSound === 'undefined') {
+                alert('audio library not loaded yet. please wait a moment and try again.');
+                return;
+            }
             const file = event.target.files[0];
             if (file) {
+                if (!file.type.includes('audio')) {
+                    alert('please select an audio file (mp3, wav, etc.)');
+                    return;
+                }
                 resetSketch();
                 if (song) {
                     song.stop();
                 }
-                song = loadSound(URL.createObjectURL(file), () => {
+                document.getElementById('songName').textContent = 'loading...';
+                const fileURL = URL.createObjectURL(file);
+                song = loadSound(fileURL, () => {
                     currentSongName = file.name;
                     document.getElementById('songName').textContent = file.name;
                     redraw();
+                }, (err) => {
+                    console.error('Failed to load file:', err);
+                    document.getElementById('songName').textContent = 'failed to load';
+                    alert('failed to load audio file. please try a different file.');
                 });
             }
         }
 
         function surpriseMe() {
+            if (typeof loadSound === 'undefined') {
+                alert('audio library not loaded yet. please wait a moment and try again.');
+                return;
+            }
             resetSketch();
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             if (song) {
