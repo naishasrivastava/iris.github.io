@@ -137,6 +137,12 @@
             cursor: not-allowed;
         }
 
+        .btn-surprise:hover {
+            background: linear-gradient(135deg, #4A6FD4 0%, #8975D3 100%) !important;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 4px 4px 0px rgba(120, 53, 15, 0.2);
+        }
+
         .btn-secondary {
             background: white;
             color: #78350f;
@@ -162,10 +168,6 @@
             border: 2px solid #78350f;
             font-size: 1rem;
             margin-bottom: 0;
-        }
-
-        .btn-surprise:hover {
-            transform: translateY(-2px) scale(1.02);
         }
 
         .file-input-wrapper {
@@ -491,7 +493,7 @@
             let d = song.duration();
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
-            angle = progress * 361;
+            angle = progress * 360;
 
             let spectrum = fft.analyze().reverse().slice(40);
 
@@ -504,13 +506,13 @@
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
                 let a = spectrum[i];
-                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 215));
+                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 180));
             }
             endShape();
             pop();
 
             // Build iris pattern while playing
-            if (isPlaying && angle <= 361) {
+            if (isPlaying && angle <= 360) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -528,7 +530,7 @@
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                if (angle >= 361 || current >= d) {
+                if (angle >= 360 || current >= d) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
