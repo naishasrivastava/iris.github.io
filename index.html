@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Irisgram - Audio Visualizer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #fffbeb;
+            color: #78350f;
+            line-height: 1.6;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 900;
+            text-transform: lowercase;
+            color: #78350f;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .main-layout {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .controls-panel {
+            background: white;
+            padding: 2rem;
+            border: 2px solid #78350f;
+            box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
+            height: fit-content;
+        }
+
+        .control-section {
+            margin-bottom: 2rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #fef3c7;
+        }
+
+        .control-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .control-section h3 {
+            font-size: 1.25rem;
+            font-weight: 900;
+            text-transform: lowercase;
+            color: #1d4ed8;
+            margin-bottom: 1rem;
+        }
+
+        .color-picker-group {
+            margin-bottom: 1rem;
+        }
+
+        .color-picker-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            color: #78350f;
+            margin-bottom: 0.5rem;
+        }
+
+        .color-picker {
+            width: 100%;
+            height: 50px;
+            border: 2px solid #78350f;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            border: 2px solid #78350f;
+            background: #2563eb;
+            color: white;
+            cursor: pointer;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #78350f;
+        }
+
+        .btn-secondary:hover {
+            background: #fef3c7;
+        }
+
+        .btn-surprise {
+            background: linear-gradient(135deg, #5C81F6 0%, #9B87F5 100%);
+            border: 2px solid #78350f;
+            font-size: 1.1rem;
+        }
+
+        .btn-surprise:hover {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 0.75rem 1rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            border: 2px solid #78350f;
+            background: white;
+            color: #78350f;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #fef3c7;
+        }
+
+        .canvas-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            padding: 2rem;
+            border: 2px solid #78350f;
+            box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
+        }
+
+        .song-name {
+            font-size: 0.875rem;
+            color: #92400e;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 1024px) {
+            .main-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>irisgram</h1>
+        
+        <div class="main-layout">
+            <div class="controls-panel">
+                <div class="control-section">
+                    <h3>colors</h3>
+                    <div class="color-picker-group">
+                        <label for="irisColor">iris color:</label>
+                        <input type="color" id="irisColor" class="color-picker" value="#6ea6ff">
+                    </div>
+                    <div class="color-picker-group">
+                        <label for="bgColor">background color:</label>
+                        <input type="color" id="bgColor" class="color-picker" value="#000000">
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>upload song</h3>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fileInput" accept="audio/*">
+                        <label for="fileInput" class="file-input-label">choose audio file</label>
+                    </div>
+                    <div class="song-name" id="songName">no song loaded</div>
+                </div>
+
+                <div class="control-section">
+                    <h3>default songs</h3>
+                    <button class="btn btn-surprise" onclick="surpriseMe()">✨ surprise me!</button>
+                </div>
+
+                <div class="control-section">
+                    <h3>controls</h3>
+                    <button class="btn" id="playPauseBtn" onclick="handlePlayPause()">play</button>
+                    <button class="btn btn-secondary" onclick="resetSketch()">reset</button>
+                </div>
+
+                <div class="control-section">
+                    <h3>save</h3>
+                    <button class="btn btn-secondary" onclick="saveTransparent()">save (transparent)</button>
+                    <button class="btn btn-secondary" onclick="saveBlack()">save (black bg)</button>
+                </div>
+            </div>
+
+            <div class="canvas-container" id="canvasContainer">
+                <!-- P5.js canvas will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let song;
+        let fft;
+        let angle = 0;
+        let layer;
+        let isPlaying = false;
+        let isPaused = false;
+        let isFinished = false;
+        let irisColor = { r: 110, g: 166, b: 255 };
+        let bgColor = { r: 0, g: 0, b: 0 };
+        let currentSongName = "no song loaded";
+
+        // Default songs (placeholder URLs - you'll need to add actual songs)
+        const defaultSongs = [
+            { name: "song 1", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+            { name: "song 2", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3" },
+            { name: "song 3", url: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+        ];
+
+        function setup() {
+            let canvas = createCanvas(550, 550);
+            canvas.parent('canvasContainer');
+            layer = createGraphics(width, height);
+            fft = new p5.FFT(0, 256);
+            frameRate(60);
+            noLoop();
+            getAudioContext().suspend();
+
+            // Color pickers
+            document.getElementById('irisColor').addEventListener('input', (e) => {
+                const hex = e.target.value;
+                irisColor = hexToRgb(hex);
+            });
+
+            document.getElementById('bgColor').addEventListener('input', (e) => {
+                const hex = e.target.value;
+                bgColor = hexToRgb(hex);
+            });
+
+            // File upload
+            document.getElementById('fileInput').addEventListener('change', handleFileSelect);
+
+            setInterval(() => {
+                if (isPlaying) redraw();
+            }, 1000 / 60);
+        }
+
+        function draw() {
+            background(bgColor.r, bgColor.g, bgColor.b);
+            
+            if (!song || !song.isLoaded()) {
+                push();
+                fill(255);
+                textAlign(CENTER, CENTER);
+                textSize(16);
+                text('load a song to begin', width / 2, height / 2);
+                pop();
+                return;
+            }
+
+            let d = song.duration();
+            let current = song.currentTime();
+            let progress = constrain(current / d, 0, 1);
+            angle = progress * 361;
+
+            let spectrum = fft.analyze().reverse().slice(40);
+
+            push();
+            translate(width / 2, height / 2);
+            noFill();
+            stroke(255);
+            beginShape();
+            for (let i = 0; i < spectrum.length; i++) {
+                let a = spectrum[i];
+                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 215));
+            }
+            endShape();
+            pop();
+
+            if (isPlaying && angle <= 361) {
+                push();
+                translate(width / 2, height / 2);
+                rotate(radians(angle));
+                layer.push();
+                layer.translate(width / 2, height / 2);
+                layer.rotate(radians(-angle));
+                for (let i = 0; i < spectrum.length; i++) {
+                    layer.strokeWeight(0.018 * spectrum[i]);
+                    layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
+                    layer.line(0, i, 0, i);
+                }
+                layer.pop();
+                image(layer, -width / 2, -height / 2);
+                pop();
+
+                if (angle >= 361 || current >= d) {
+                    song.stop();
+                    isPlaying = false;
+                    isPaused = false;
+                    isFinished = true;
+                    document.getElementById('playPauseBtn').textContent = 'play';
+                }
+            } else {
+                image(layer, 0, 0);
+            }
+        }
+
+        function handlePlayPause() {
+            if (!song || !song.isLoaded()) {
+                alert('please load a song first!');
+                return;
+            }
+
+            if (isFinished) return;
+
+            if (getAudioContext().state !== 'running') {
+                getAudioContext().resume();
+            }
+
+            if (!isPlaying && !isPaused) {
+                angle = 0;
+                layer.clear();
+                song.play();
+                isPlaying = true;
+                document.getElementById('playPauseBtn').textContent = 'pause';
+            } else if (isPlaying) {
+                song.pause();
+                isPlaying = false;
+                isPaused = true;
+                document.getElementById('playPauseBtn').textContent = 'play';
+            } else if (isPaused) {
+                song.play();
+                isPlaying = true;
+                isPaused = false;
+                document.getElementById('playPauseBtn').textContent = 'pause';
+            }
+        }
+
+        function resetSketch() {
+            layer.clear();
+            if (song) song.stop();
+            angle = 0;
+            isPlaying = false;
+            isPaused = false;
+            isFinished = false;
+            document.getElementById('playPauseBtn').textContent = 'play';
+            redraw();
+        }
+
+        function saveTransparent() {
+            save(layer, 'irisgram.png');
+        }
+
+        function saveBlack() {
+            let bgLayer = createGraphics(width, height);
+            bgLayer.background(0);
+            bgLayer.image(layer, 0, 0);
+            save(bgLayer, 'irisgram_blackbg.png');
+        }
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                resetSketch();
+                if (song) {
+                    song.stop();
+                }
+                song = loadSound(URL.createObjectURL(file), () => {
+                    currentSongName = file.name;
+                    document.getElementById('songName').textContent = file.name;
+                    redraw();
+                });
+            }
+        }
+
+        function surpriseMe() {
+            resetSketch();
+            const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
+            if (song) {
+                song.stop();
+            }
+            song = loadSound(randomSong.url, () => {
+                currentSongName = randomSong.name;
+                document.getElementById('songName').textContent = randomSong.name;
+                redraw();
+            }, () => {
+                alert('failed to load song. please try uploading your own!');
+            });
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? {
+                r: parseInt(result[1], 16),
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 110, g: 166, b: 255 };
+        }
+    </script>
+</body>
+</html>
