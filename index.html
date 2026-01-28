@@ -18,74 +18,85 @@
             background-color: #fffbeb;
             color: #78350f;
             line-height: 1.6;
-            padding: 2rem;
+            padding: 1.5rem;
+            height: 100vh;
+            overflow: hidden;
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1600px;
             margin: 0 auto;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         h1 {
-            font-size: 3rem;
+            font-size: 2.5rem;
             font-weight: 900;
             text-transform: lowercase;
             color: #78350f;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
             text-align: center;
         }
 
         .main-layout {
             display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 2rem;
-            margin-top: 2rem;
+            grid-template-columns: 280px 1fr;
+            gap: 1.5rem;
+            flex: 1;
+            overflow: hidden;
         }
 
         .controls-panel {
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
-            height: fit-content;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
         }
 
         .control-section {
-            margin-bottom: 2rem;
-            padding-bottom: 2rem;
+            padding-bottom: 1.5rem;
             border-bottom: 2px solid #fef3c7;
         }
 
         .control-section:last-child {
             border-bottom: none;
-            margin-bottom: 0;
             padding-bottom: 0;
         }
 
         .control-section h3 {
-            font-size: 1.25rem;
+            font-size: 1rem;
             font-weight: 900;
             text-transform: lowercase;
             color: #1d4ed8;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .color-picker-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .color-picker-group:last-child {
+            margin-bottom: 0;
         }
 
         .color-picker-group label {
             display: block;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-transform: lowercase;
             color: #78350f;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .color-picker {
             width: 100%;
-            height: 50px;
+            height: 40px;
             border: 2px solid #78350f;
             border-radius: 4px;
             cursor: pointer;
@@ -93,7 +104,7 @@
 
         .btn {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.8rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
@@ -101,8 +112,12 @@
             color: white;
             cursor: pointer;
             margin-bottom: 0.5rem;
-            font-size: 1rem;
+            font-size: 0.875rem;
             transition: all 0.3s;
+        }
+
+        .btn:last-child {
+            margin-bottom: 0;
         }
 
         .btn:hover {
@@ -122,7 +137,8 @@
         .btn-surprise {
             background: linear-gradient(135deg, #5C81F6 0%, #9B87F5 100%);
             border: 2px solid #78350f;
-            font-size: 1.1rem;
+            font-size: 1rem;
+            margin-bottom: 0;
         }
 
         .btn-surprise:hover {
@@ -143,7 +159,7 @@
 
         .file-input-label {
             display: block;
-            padding: 0.75rem 1rem;
+            padding: 0.6rem 0.8rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
@@ -152,10 +168,19 @@
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
+            font-size: 0.875rem;
         }
 
         .file-input-label:hover {
             background: #fef3c7;
+        }
+
+        .song-name {
+            font-size: 0.75rem;
+            color: #92400e;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: 600;
         }
 
         .canvas-container {
@@ -163,22 +188,25 @@
             justify-content: center;
             align-items: center;
             background: white;
-            padding: 2rem;
+            padding: 1.5rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
+            overflow: hidden;
         }
 
-        .song-name {
-            font-size: 0.875rem;
-            color: #92400e;
-            text-align: center;
-            margin-top: 0.5rem;
-            font-weight: 600;
-        }
-
-        @media (max-width: 1024px) {
-            .main-layout {
-                grid-template-columns: 1fr;
+        @media (max-height: 800px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 0.75rem;
+            }
+            
+            .controls-panel {
+                padding: 1rem;
+                gap: 1rem;
+            }
+            
+            .control-section {
+                padding-bottom: 1rem;
             }
         }
     </style>
@@ -196,7 +224,7 @@
                         <input type="color" id="irisColor" class="color-picker" value="#6ea6ff">
                     </div>
                     <div class="color-picker-group">
-                        <label for="bgColor">background color:</label>
+                        <label for="bgColor">background:</label>
                         <input type="color" id="bgColor" class="color-picker" value="#000000">
                     </div>
                 </div>
@@ -205,7 +233,7 @@
                     <h3>upload song</h3>
                     <div class="file-input-wrapper">
                         <input type="file" id="fileInput" accept="audio/*">
-                        <label for="fileInput" class="file-input-label">choose audio file</label>
+                        <label for="fileInput" class="file-input-label">choose file</label>
                     </div>
                     <div class="song-name" id="songName">no song loaded</div>
                 </div>
@@ -223,8 +251,8 @@
 
                 <div class="control-section">
                     <h3>save</h3>
-                    <button class="btn btn-secondary" onclick="saveTransparent()">save (transparent)</button>
-                    <button class="btn btn-secondary" onclick="saveBlack()">save (black bg)</button>
+                    <button class="btn btn-secondary" onclick="saveTransparent()">transparent</button>
+                    <button class="btn btn-secondary" onclick="saveBlack()">black bg</button>
                 </div>
             </div>
 
@@ -246,11 +274,12 @@
         let bgColor = { r: 0, g: 0, b: 0 };
         let currentSongName = "no song loaded";
 
+        // Default songs with relative paths
         const defaultSongs = [
-            { name: "song 1", url: "espresso.mp3" },
-            { name: "song 2", url: "nights.mp3" },
-            { name: "song 3", url: "getup.mp3" }
-            { name: "song 4", url: "dandelion.mp3" }
+            { name: "espresso", url: "espresso.mp3" },
+            { name: "dandelion", url: "dandelion.mp3" },
+            { name: "getup", url: "getup.mp3" },
+            { name: "nights", url: "nights.mp3" }
         ];
 
         function setup() {
@@ -415,11 +444,14 @@
             if (song) {
                 song.stop();
             }
+            document.getElementById('songName').textContent = 'loading...';
             song = loadSound(randomSong.url, () => {
                 currentSongName = randomSong.name;
                 document.getElementById('songName').textContent = randomSong.name;
                 redraw();
-            }, () => {
+            }, (err) => {
+                console.error('Failed to load song:', err);
+                document.getElementById('songName').textContent = 'failed to load';
                 alert('failed to load song. please try uploading your own!');
             });
         }
