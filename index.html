@@ -217,6 +217,8 @@
         @media (max-width: 768px) {
             .canvas-container {
                 padding: 0.5rem;
+                width: 100%;
+                height: auto;
             }
         }
 
@@ -388,8 +390,17 @@
 
         function setup() {
             setTimeout(() => {
-                const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-                let canvas = createCanvas(controlsHeight, controlsHeight);
+                let canvasSize;
+                if (windowWidth > 768) {
+                    // Desktop: match controls height
+                    const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
+                    canvasSize = controlsHeight;
+                } else {
+                    // Mobile: fit within screen width with padding
+                    canvasSize = Math.min(windowWidth - 40, windowHeight * 0.5);
+                }
+                
+                let canvas = createCanvas(canvasSize, canvasSize);
                 canvas.parent('canvasContainer');
                 layer = createGraphics(width, height);
                 fft = new p5.FFT(0, 256);
@@ -411,8 +422,16 @@
         }
 
         function windowResized() {
-            const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-            resizeCanvas(controlsHeight, controlsHeight);
+            let canvasSize;
+            if (windowWidth > 768) {
+                // Desktop: match controls height
+                const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
+                canvasSize = controlsHeight;
+            } else {
+                // Mobile: fit within screen width with padding
+                canvasSize = Math.min(windowWidth - 40, windowHeight * 0.5);
+            }
+            resizeCanvas(canvasSize, canvasSize);
             layer = createGraphics(width, height);
         }
 
@@ -427,10 +446,15 @@
             let d = song.duration();
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
-            angle = progress * 361;
+            
+            // Only update angle when playing
+            if (isPlaying) {
+                angle = progress * 361;
+            }
 
             let spectrum = fft.analyze().reverse().slice(40);
 
+            // Draw live spectrum visualization (white waveform)
             push();
             translate(width / 2, height / 2);
             noFill();
@@ -444,6 +468,7 @@
             endShape();
             pop();
 
+            // Draw iris pattern
             if (isPlaying && angle <= 361) {
                 push();
                 translate(width / 2, height / 2);
@@ -491,6 +516,7 @@
                 angle = 0;
                 layer.clear();
                 song.play();
+                fft.setInput(song); // IMPORTANT: Connect FFT to song
                 isPlaying = true;
                 document.getElementById('playPauseBtn').textContent = 'pause';
             } else if (isPlaying) {
@@ -544,6 +570,7 @@
                 const fileURL = URL.createObjectURL(file);
                 song = loadSound(fileURL, () => {
                     document.getElementById('songName').textContent = file.name;
+                    fft.setInput(song); // Connect FFT to the new song
                 }, (err) => {
                     console.error('Failed to load file:', err);
                     document.getElementById('songName').textContent = 'failed to load';
@@ -563,6 +590,7 @@
             document.getElementById('songName').textContent = 'loading...';
             song = loadSound(randomSong.url, () => {
                 document.getElementById('songName').textContent = randomSong.name;
+                fft.setInput(song); // Connect FFT to the new song
             }, (err) => {
                 console.error('Failed to load song:', err);
                 document.getElementById('songName').textContent = 'failed to load';
