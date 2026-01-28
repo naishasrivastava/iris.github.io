@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Irisgram - Audio Visualizer</title>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/addons/p5.sound.js"></script>
@@ -13,26 +13,14 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            width: 100%;
-            overflow-x: hidden;
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: #fffbeb;
             color: #78350f;
             line-height: 1.6;
-            padding: 1.5rem;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 0.75rem;
-            }
         }
 
         .container {
@@ -42,6 +30,13 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            padding: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.75rem;
+            }
         }
 
         h1 {
@@ -217,7 +212,6 @@
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             background: #000000;
-            aspect-ratio: 1 / 1;
         }
 
         @media (max-width: 768px) {
@@ -231,24 +225,13 @@
             border-top: 2px solid #78350f;
             padding: 2rem;
             text-align: center;
-            margin: 2rem -1.5rem 0 -1.5rem;
-            width: calc(100% + 3rem);
+            width: 100%;
         }
 
         @media (max-width: 768px) {
             footer {
-                margin: 2rem -0.75rem 0 -0.75rem;
-                width: calc(100% + 1.5rem);
                 padding: 1.5rem 1rem;
             }
-        }
-
-        footer p {
-            color: #92400e;
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-transform: lowercase;
-            margin-bottom: 1.5rem;
         }
 
         .contact-links {
@@ -256,6 +239,7 @@
             justify-content: center;
             gap: 1.5rem;
             flex-wrap: wrap;
+            margin-bottom: 1.5rem;
         }
 
         @media (max-width: 768px) {
@@ -270,7 +254,6 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
             padding: 1rem 2rem;
             font-weight: 700;
             text-transform: lowercase;
@@ -305,6 +288,14 @@
         .contact-btn.linkedin {
             background: #fef3c7;
             color: #78350f;
+        }
+
+        footer p {
+            color: #92400e;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: lowercase;
+            margin: 0.25rem 0;
         }
     </style>
 </head>
@@ -371,7 +362,8 @@
                 linkedin
             </a>
         </div>
-        <p>© 2025 naisha srivastava</p>
+        <p>made with ♥ by naisha srivastava</p>
+        <p>© 2025</p>
     </footer>
 
     <script>
@@ -384,9 +376,7 @@
         let isFinished = false;
         let irisColor = { r: 110, g: 166, b: 255 };
         let bgColor = { r: 0, g: 0, b: 0 };
-        let currentSongName = "no song loaded";
 
-        // Default songs with relative paths
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
             { name: "dandelion", url: "dandelion.mp3" },
@@ -394,63 +384,39 @@
             { name: "nights", url: "nights.mp3" }
         ];
 
-        function preload() {
-            // This ensures p5.sound is ready
-        }
+        function preload() {}
 
         function setup() {
-            // Calculate canvas size based on controls panel height
             setTimeout(() => {
-                let canvasSize;
-                if (windowWidth > 768) {
-                    const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-                    canvasSize = controlsHeight;
-                } else {
-                    canvasSize = min(windowWidth - 60, windowHeight * 0.5);
-                }
-                
-                let canvas = createCanvas(canvasSize, canvasSize);
+                const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
+                let canvas = createCanvas(controlsHeight, controlsHeight);
                 canvas.parent('canvasContainer');
                 layer = createGraphics(width, height);
                 fft = new p5.FFT(0, 256);
                 frameRate(60);
-                // IMPORTANT: Don't use noLoop() - we need continuous drawing!
                 getAudioContext().suspend();
 
-                // Color pickers
                 document.getElementById('irisColor').addEventListener('input', (e) => {
-                    const hex = e.target.value;
-                    irisColor = hexToRgb(hex);
+                    irisColor = hexToRgb(e.target.value);
                 });
 
                 document.getElementById('bgColor').addEventListener('input', (e) => {
-                    const hex = e.target.value;
-                    bgColor = hexToRgb(hex);
-                    document.getElementById('canvasContainer').style.backgroundColor = hex;
+                    bgColor = hexToRgb(e.target.value);
+                    document.getElementById('canvasContainer').style.backgroundColor = e.target.value;
                 });
 
-                // File upload
                 document.getElementById('fileInput').addEventListener('change', handleFileSelect);
-
-                // Set initial canvas container background
                 document.getElementById('canvasContainer').style.backgroundColor = '#000000';
             }, 100);
         }
 
         function windowResized() {
-            let canvasSize;
-            if (windowWidth > 768) {
-                const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-                canvasSize = controlsHeight;
-            } else {
-                canvasSize = min(windowWidth - 60, windowHeight * 0.5);
-            }
-            resizeCanvas(canvasSize, canvasSize);
+            const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
+            resizeCanvas(controlsHeight, controlsHeight);
             layer = createGraphics(width, height);
         }
 
         function draw() {
-            // Always update background color
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
@@ -465,7 +431,6 @@
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Draw live spectrum visualization (white waveform)
             push();
             translate(width / 2, height / 2);
             noFill();
@@ -479,7 +444,6 @@
             endShape();
             pop();
 
-            // Draw iris pattern
             if (isPlaying && angle <= 361) {
                 push();
                 translate(width / 2, height / 2);
@@ -509,14 +473,12 @@
         }
 
         function handlePlayPause() {
-            console.log('handlePlayPause called');
             if (!song || !song.isLoaded()) {
                 alert('please load a song first!');
                 return;
             }
 
             if (isFinished) {
-                // Allow restart after finished
                 resetSketch();
                 isFinished = false;
             }
@@ -526,20 +488,17 @@
             }
 
             if (!isPlaying && !isPaused) {
-                console.log('Starting playback');
                 angle = 0;
                 layer.clear();
                 song.play();
                 isPlaying = true;
                 document.getElementById('playPauseBtn').textContent = 'pause';
             } else if (isPlaying) {
-                console.log('Pausing playback');
                 song.pause();
                 isPlaying = false;
                 isPaused = true;
                 document.getElementById('playPauseBtn').textContent = 'play';
             } else if (isPaused) {
-                console.log('Resuming playback');
                 song.play();
                 isPlaying = true;
                 isPaused = false;
@@ -548,7 +507,6 @@
         }
 
         function resetSketch() {
-            console.log('resetSketch called');
             layer.clear();
             if (song) song.stop();
             angle = 0;
@@ -559,12 +517,10 @@
         }
 
         function saveTransparent() {
-            console.log('saveTransparent called');
             save(layer, 'irisgram.png');
         }
 
         function saveBlack() {
-            console.log('saveBlack called');
             let bgLayer = createGraphics(width, height);
             bgLayer.background(bgColor.r, bgColor.g, bgColor.b);
             bgLayer.image(layer, 0, 0);
@@ -583,15 +539,11 @@
                     return;
                 }
                 resetSketch();
-                if (song) {
-                    song.stop();
-                }
+                if (song) song.stop();
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
                 song = loadSound(fileURL, () => {
-                    currentSongName = file.name;
                     document.getElementById('songName').textContent = file.name;
-                    console.log('Song loaded:', file.name);
                 }, (err) => {
                     console.error('Failed to load file:', err);
                     document.getElementById('songName').textContent = 'failed to load';
@@ -601,21 +553,16 @@
         }
 
         function surpriseMe() {
-            console.log('surpriseMe called');
             if (typeof loadSound === 'undefined') {
                 alert('audio library not loaded yet. please wait a moment and try again.');
                 return;
             }
             resetSketch();
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
-            if (song) {
-                song.stop();
-            }
+            if (song) song.stop();
             document.getElementById('songName').textContent = 'loading...';
             song = loadSound(randomSong.url, () => {
-                currentSongName = randomSong.name;
                 document.getElementById('songName').textContent = randomSong.name;
-                console.log('Random song loaded:', randomSong.name);
             }, (err) => {
                 console.error('Failed to load song:', err);
                 document.getElementById('songName').textContent = 'failed to load';
