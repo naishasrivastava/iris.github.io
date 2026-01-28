@@ -223,16 +223,16 @@
         }
 
         .canvas-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 0.75rem;
-            border: 2px solid #78350f;
-            box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
-            overflow: hidden;
-            width: 220px;
-            flex-shrink: 0;
-            aspect-ratio: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0.75rem;
+        border: 2px solid #78350f;
+        box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
+    
+        flex: 1;              /* stretch to match controls height */
+        max-width: 550px;     /* prevents it from getting huge */
+        aspect-ratio: 1 / 1; /* force square */
         }
 
         @media (max-width: 768px) {
@@ -345,11 +345,9 @@
 
         function setup() {
             // Make canvas responsive
-            let canvasSize = min(550, windowWidth - 100, windowHeight - 200);
-            if (windowWidth <= 768) {
-                canvasSize = min(windowWidth - 30, windowHeight * 0.6);
-            }
-            let canvas = createCanvas(canvasSize, canvasSize);
+            let container = document.getElementById('canvasContainer');
+            let size = Math.min(container.clientWidth, container.clientHeight);
+            let canvas = createCanvas(size, size);
             canvas.parent('canvasContainer');
             layer = createGraphics(width, height);
             fft = new p5.FFT(0, 256);
@@ -380,11 +378,9 @@
         }
 
         function windowResized() {
-            let canvasSize = min(550, windowWidth - 100, windowHeight - 200);
-            if (windowWidth <= 768) {
-                canvasSize = min(windowWidth - 30, windowHeight * 0.6);
-            }
-            resizeCanvas(canvasSize, canvasSize);
+            let container = document.getElementById('canvasContainer');
+            let size = Math.min(container.clientWidth, container.clientHeight);
+            resizeCanvas(size, size);
             layer = createGraphics(width, height);
             redraw();
         }
