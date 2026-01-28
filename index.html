@@ -1,4 +1,5 @@
-f<!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -18,31 +19,37 @@ f<!DOCTYPE html>
             background-color: #fffbeb;
             color: #78350f;
             line-height: 1.6;
-            padding: 1.5rem;
+            padding: 1rem;
             height: 100vh;
             overflow: hidden;
         }
 
         @media (max-width: 768px) {
             body {
-                padding: 0.75rem;
+                padding: 0.5rem;
             }
         }
 
         .container {
             max-width: 1600px;
             margin: 0 auto;
-            height: 100%;
+            height: calc(100vh - 2rem);
             display: flex;
             flex-direction: column;
         }
 
+        @media (max-width: 768px) {
+            .container {
+                height: calc(100vh - 1rem);
+            }
+        }
+
         h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 900;
             text-transform: lowercase;
             color: #78350f;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
             text-align: center;
         }
 
@@ -54,18 +61,19 @@ f<!DOCTYPE html>
         }
 
         .main-layout {
-            display: grid;
-            grid-template-columns: 240px 1fr;
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
             gap: 1.5rem;
             flex: 1;
             overflow: hidden;
+            min-height: 0;
         }
 
         @media (max-width: 768px) {
             .main-layout {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr;
-                gap: 1rem;
+                flex-direction: column;
+                align-items: center;
             }
         }
 
@@ -76,14 +84,17 @@ f<!DOCTYPE html>
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            height: fit-content;
+            gap: 0.75rem;
+            width: 220px;
+            flex-shrink: 0;
+            overflow-y: auto;
         }
 
         @media (max-width: 768px) {
             .controls-panel {
                 padding: 1rem;
                 gap: 1rem;
+                width: 100%;
             }
         }
 
@@ -215,12 +226,22 @@ f<!DOCTYPE html>
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 1.5rem;
+            padding: 0.75rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             overflow: hidden;
-            width: 100%;
-            max-height: 100%;
+            width: 220px;
+            flex-shrink: 0;
+            aspect-ratio: 1;
+        }
+
+        @media (max-width: 768px) {
+            .canvas-container {
+                padding: 0.5rem;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1;
+            }
         }
 
         @media (max-width: 768px) {
@@ -313,8 +334,8 @@ f<!DOCTYPE html>
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
             { name: "dandelion", url: "dandelion.mp3" },
-            { name: "get up", url: "getup.mp3" },
-            { name: "nights like this", url: "nights.mp3" }  
+            { name: "getup", url: "getup.mp3" },
+            { name: "nights", url: "nights.mp3" }
         ];
 
         // Wait for p5.sound to load
