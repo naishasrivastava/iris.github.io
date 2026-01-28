@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Irisgram - Audio Visualizer</title>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/p5.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/p5@1.9.0/lib/addons/p5.sound.js"></script>
@@ -11,6 +11,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            overflow-x: hidden;
         }
 
         body {
@@ -33,6 +38,7 @@
         .container {
             max-width: 1600px;
             margin: 0 auto;
+            width: 100%;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -64,7 +70,6 @@
         @media (max-width: 768px) {
             .main-layout {
                 grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr;
                 gap: 1rem;
             }
         }
@@ -78,13 +83,6 @@
             flex-direction: column;
             gap: 1rem;
             height: fit-content;
-        }
-
-        @media (max-width: 768px) {
-            .controls-panel {
-                padding: 1rem;
-                gap: 1rem;
-            }
         }
 
         .control-section {
@@ -225,7 +223,6 @@
         @media (max-width: 768px) {
             .canvas-container {
                 padding: 0.5rem;
-                aspect-ratio: 1 / 1;
             }
         }
 
@@ -234,7 +231,16 @@
             border-top: 2px solid #78350f;
             padding: 2rem;
             text-align: center;
-            margin-top: auto;
+            margin: 2rem -1.5rem 0 -1.5rem;
+            width: calc(100% + 3rem);
+        }
+
+        @media (max-width: 768px) {
+            footer {
+                margin: 2rem -0.75rem 0 -0.75rem;
+                width: calc(100% + 1.5rem);
+                padding: 1.5rem 1rem;
+            }
         }
 
         footer p {
@@ -250,12 +256,20 @@
             justify-content: center;
             gap: 1.5rem;
             flex-wrap: wrap;
-            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .contact-links {
+                gap: 1rem;
+                flex-direction: column;
+                align-items: center;
+            }
         }
 
         .contact-btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 0.75rem;
             padding: 1rem 2rem;
             font-weight: 700;
@@ -264,6 +278,13 @@
             border: 2px solid #78350f;
             transition: all 0.3s;
             box-shadow: 4px 4px 0px rgba(120, 53, 15, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .contact-btn {
+                width: 80%;
+                max-width: 300px;
+            }
         }
 
         .contact-btn:hover {
@@ -328,7 +349,7 @@
                 <div class="control-section">
                     <h3>save</h3>
                     <button class="btn btn-secondary" onclick="saveTransparent()">transparent</button>
-                    <button class="btn btn-secondary" onclick="with background">with background</button>
+                    <button class="btn btn-secondary" onclick="saveBlack()">with background</button>
                 </div>
             </div>
 
@@ -380,13 +401,20 @@
         function setup() {
             // Calculate canvas size based on controls panel height
             setTimeout(() => {
-                const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-                const canvasSize = controlsHeight;
+                let canvasSize;
+                if (windowWidth > 768) {
+                    const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
+                    canvasSize = controlsHeight;
+                } else {
+                    canvasSize = min(windowWidth - 60, windowHeight * 0.5);
+                }
+                
                 let canvas = createCanvas(canvasSize, canvasSize);
                 canvas.parent('canvasContainer');
                 layer = createGraphics(width, height);
                 fft = new p5.FFT(0, 256);
                 frameRate(60);
+                // IMPORTANT: Don't use noLoop() - we need continuous drawing!
                 getAudioContext().suspend();
 
                 // Color pickers
@@ -410,16 +438,14 @@
         }
 
         function windowResized() {
-            // On desktop: match controls height, on mobile: just keep it square
+            let canvasSize;
             if (windowWidth > 768) {
                 const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-                const canvasSize = controlsHeight;
-                resizeCanvas(canvasSize, canvasSize);
+                canvasSize = controlsHeight;
             } else {
-                // On mobile, maintain current square size
-                const currentSize = width;
-                resizeCanvas(currentSize, currentSize);
+                canvasSize = min(windowWidth - 60, windowHeight * 0.5);
             }
+            resizeCanvas(canvasSize, canvasSize);
             layer = createGraphics(width, height);
         }
 
@@ -439,11 +465,12 @@
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Draw live spectrum visualization
+            // Draw live spectrum visualization (white waveform)
             push();
             translate(width / 2, height / 2);
             noFill();
             stroke(255);
+            strokeWeight(1);
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
                 let a = spectrum[i];
@@ -482,29 +509,37 @@
         }
 
         function handlePlayPause() {
+            console.log('handlePlayPause called');
             if (!song || !song.isLoaded()) {
                 alert('please load a song first!');
                 return;
             }
 
-            if (isFinished) return;
+            if (isFinished) {
+                // Allow restart after finished
+                resetSketch();
+                isFinished = false;
+            }
 
             if (getAudioContext().state !== 'running') {
                 getAudioContext().resume();
             }
 
             if (!isPlaying && !isPaused) {
+                console.log('Starting playback');
                 angle = 0;
                 layer.clear();
                 song.play();
                 isPlaying = true;
                 document.getElementById('playPauseBtn').textContent = 'pause';
             } else if (isPlaying) {
+                console.log('Pausing playback');
                 song.pause();
                 isPlaying = false;
                 isPaused = true;
                 document.getElementById('playPauseBtn').textContent = 'play';
             } else if (isPaused) {
+                console.log('Resuming playback');
                 song.play();
                 isPlaying = true;
                 isPaused = false;
@@ -513,6 +548,7 @@
         }
 
         function resetSketch() {
+            console.log('resetSketch called');
             layer.clear();
             if (song) song.stop();
             angle = 0;
@@ -523,10 +559,12 @@
         }
 
         function saveTransparent() {
+            console.log('saveTransparent called');
             save(layer, 'irisgram.png');
         }
 
         function saveBlack() {
+            console.log('saveBlack called');
             let bgLayer = createGraphics(width, height);
             bgLayer.background(bgColor.r, bgColor.g, bgColor.b);
             bgLayer.image(layer, 0, 0);
@@ -553,6 +591,7 @@
                 song = loadSound(fileURL, () => {
                     currentSongName = file.name;
                     document.getElementById('songName').textContent = file.name;
+                    console.log('Song loaded:', file.name);
                 }, (err) => {
                     console.error('Failed to load file:', err);
                     document.getElementById('songName').textContent = 'failed to load';
@@ -562,6 +601,7 @@
         }
 
         function surpriseMe() {
+            console.log('surpriseMe called');
             if (typeof loadSound === 'undefined') {
                 alert('audio library not loaded yet. please wait a moment and try again.');
                 return;
@@ -575,6 +615,7 @@
             song = loadSound(randomSong.url, () => {
                 currentSongName = randomSong.name;
                 document.getElementById('songName').textContent = randomSong.name;
+                console.log('Random song loaded:', randomSong.name);
             }, (err) => {
                 console.error('Failed to load song:', err);
                 document.getElementById('songName').textContent = 'failed to load';
