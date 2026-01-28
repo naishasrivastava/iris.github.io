@@ -393,9 +393,9 @@
             setTimeout(() => {
                 let canvasSize;
                 if (windowWidth > 768) {
-                    // Desktop: match controls height
+                    // Desktop: minimum 500px, or match controls height if larger
                     const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-                    canvasSize = controlsHeight;
+                    canvasSize = Math.max(controlsHeight, 500);
                 } else {
                     // Mobile: fit within screen width with padding
                     canvasSize = Math.min(windowWidth - 40, windowHeight * 0.5);
@@ -425,9 +425,9 @@
         function windowResized() {
             let canvasSize;
             if (windowWidth > 768) {
-                // Desktop: match controls height
+                // Desktop: minimum 500px, or match controls height if larger
                 const controlsHeight = document.getElementById('controlsPanel').offsetHeight;
-                canvasSize = controlsHeight;
+                canvasSize = Math.max(controlsHeight, 500);
             } else {
                 // Mobile: fit within screen width with padding
                 canvasSize = Math.min(windowWidth - 40, windowHeight * 0.5);
@@ -447,15 +447,11 @@
             let d = song.duration();
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
-            
-            // Only update angle when playing
-            if (isPlaying) {
-                angle = progress * 361;
-            }
+            angle = progress * 361;
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Draw live spectrum visualization (white waveform)
+            // Draw live spectrum visualization (white waveform) - always visible
             push();
             translate(width / 2, height / 2);
             noFill();
@@ -469,11 +465,14 @@
             endShape();
             pop();
 
-            // Draw iris pattern
+            // Build iris pattern while playing
             if (isPlaying && angle <= 361) {
+                // Draw new lines onto the persistent layer
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
+                
+                // Draw directly on layer in rotated position
                 layer.push();
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
@@ -483,9 +482,9 @@
                     layer.line(0, i, 0, i);
                 }
                 layer.pop();
-                image(layer, -width / 2, -height / 2);
                 pop();
 
+                // Check if finished
                 if (angle >= 361 || current >= d) {
                     song.stop();
                     isPlaying = false;
@@ -493,9 +492,10 @@
                     isFinished = true;
                     document.getElementById('playPauseBtn').textContent = 'play';
                 }
-            } else {
-                image(layer, 0, 0);
             }
+            
+            // Always show the accumulated layer
+            image(layer, 0, 0);
         }
 
         function handlePlayPause() {
@@ -517,7 +517,7 @@
                 angle = 0;
                 layer.clear();
                 song.play();
-                fft.setInput(song); // IMPORTANT: Connect FFT to song
+                fft.setInput(song);
                 isPlaying = true;
                 document.getElementById('playPauseBtn').textContent = 'pause';
             } else if (isPlaying) {
@@ -571,7 +571,7 @@
                 const fileURL = URL.createObjectURL(file);
                 song = loadSound(fileURL, () => {
                     document.getElementById('songName').textContent = file.name;
-                    fft.setInput(song); // Connect FFT to the new song
+                    fft.setInput(song);
                 }, (err) => {
                     console.error('Failed to load file:', err);
                     document.getElementById('songName').textContent = 'failed to load';
@@ -591,7 +591,7 @@
             document.getElementById('songName').textContent = 'loading...';
             song = loadSound(randomSong.url, () => {
                 document.getElementById('songName').textContent = randomSong.name;
-                fft.setInput(song); // Connect FFT to the new song
+                fft.setInput(song);
             }, (err) => {
                 console.error('Failed to load song:', err);
                 document.getElementById('songName').textContent = 'failed to load';
