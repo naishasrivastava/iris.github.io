@@ -42,8 +42,9 @@
 
         .main-layout {
             display: grid;
-            grid-template-columns: 400px 1fr;
+            grid-template-columns: 400px 400px;
             gap: 1.5rem;
+            justify-content: center;
             flex: 1;
             min-height: 600px;
             align-items: start;
@@ -55,19 +56,16 @@
             padding: 1.5rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
-            height: fit-content;
+            height: 400px;
+            overflow-y: auto;
         }
 
         .control-section {
             padding-bottom: 1rem;
             border-bottom: 2px solid #fef3c7;
-        }
-
-        .control-section.full-width {
-            grid-column: 1 / -1;
         }
 
         .control-section:last-child {
@@ -197,9 +195,8 @@
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             overflow: hidden;
-            width: 100%;
-            max-width: 100%;
-            aspect-ratio: 1;
+            width: 400px;
+            height: 400px;
         }
 
         @media (max-width: 1024px) {
@@ -220,29 +217,18 @@
             .main-layout {
                 grid-template-columns: 1fr;
                 gap: 1rem;
-                overflow: visible;
             }
 
             .controls-panel {
-                grid-template-columns: 1fr 1fr;
                 padding: 1rem;
                 height: auto;
             }
 
             .canvas-container {
                 padding: 0.5rem;
-                aspect-ratio: 1;
                 width: 100%;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .controls-panel {
-                grid-template-columns: 1fr;
-            }
-
-            .control-section {
-                grid-column: 1;
+                height: auto;
+                aspect-ratio: 1;
             }
         }
     </style>
@@ -254,16 +240,18 @@
         <div class="main-layout">
             <div class="controls-panel">
                 <div class="control-section">
-                    <h3>iris color</h3>
-                    <input type="color" id="irisColor" class="color-picker" value="#6ea6ff">
+                    <h3>colors</h3>
+                    <div class="color-picker-group">
+                        <label for="irisColor">iris color:</label>
+                        <input type="color" id="irisColor" class="color-picker" value="#6ea6ff">
+                    </div>
+                    <div class="color-picker-group">
+                        <label for="bgColor">background:</label>
+                        <input type="color" id="bgColor" class="color-picker" value="#000000">
+                    </div>
                 </div>
 
                 <div class="control-section">
-                    <h3>background</h3>
-                    <input type="color" id="bgColor" class="color-picker" value="#000000">
-                </div>
-
-                <div class="control-section full-width">
                     <h3>upload song</h3>
                     <div class="file-input-wrapper">
                         <input type="file" id="fileInput" accept="audio/mp3,audio/mpeg,audio/wav,audio/*">
@@ -272,7 +260,7 @@
                     <div class="song-name" id="songName">no song loaded</div>
                 </div>
 
-                <div class="control-section full-width">
+                <div class="control-section">
                     <h3>default songs</h3>
                     <button class="btn btn-surprise" onclick="surpriseMe()">✨ surprise me!</button>
                 </div>
