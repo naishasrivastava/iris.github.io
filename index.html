@@ -19,28 +19,15 @@
             color: #78350f;
             line-height: 1.6;
             padding: 1rem;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-            body {
-                padding: 0.5rem;
-            }
+            min-height: 100vh;
         }
 
         .container {
-            max-width: 1600px;
+            max-width: 1400px;
             margin: 0 auto;
             height: calc(100vh - 2rem);
             display: flex;
             flex-direction: column;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                height: calc(100vh - 1rem);
-            }
         }
 
         h1 {
@@ -52,28 +39,13 @@
             text-align: center;
         }
 
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 1.75rem;
-                margin-bottom: 0.5rem;
-            }
-        }
-
         .main-layout {
-            display: flex;
-            justify-content: center;
-            align-items: stretch;
+            display: grid;
+            grid-template-columns: 350px 1fr;
             gap: 1.5rem;
             flex: 1;
             overflow: hidden;
             min-height: 0;
-        }
-
-        @media (max-width: 768px) {
-            .main-layout {
-                flex-direction: column;
-                align-items: center;
-            }
         }
 
         .controls-panel {
@@ -81,25 +53,19 @@
             padding: 1rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 0.75rem;
-            width: 220px;
-            flex-shrink: 0;
-            overflow-y: auto;
-        }
-
-        @media (max-width: 768px) {
-            .controls-panel {
-                padding: 1rem;
-                gap: 1rem;
-                width: 100%;
-            }
+            height: fit-content;
         }
 
         .control-section {
-            padding-bottom: 1rem;
+            padding-bottom: 0.75rem;
             border-bottom: 2px solid #fef3c7;
+        }
+
+        .control-section.full-width {
+            grid-column: 1 / -1;
         }
 
         .control-section:last-child {
@@ -108,11 +74,11 @@
         }
 
         .control-section h3 {
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 900;
             text-transform: lowercase;
             color: #1d4ed8;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
 
         .color-picker-group {
@@ -134,7 +100,7 @@
 
         .color-picker {
             width: 100%;
-            height: 35px;
+            height: 32px;
             border: 2px solid #78350f;
             border-radius: 4px;
             cursor: pointer;
@@ -142,15 +108,15 @@
 
         .btn {
             width: 100%;
-            padding: 0.5rem 0.75rem;
+            padding: 0.45rem 0.6rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
             background: #2563eb;
             color: white;
             cursor: pointer;
-            margin-bottom: 0.4rem;
-            font-size: 0.8rem;
+            margin-bottom: 0.35rem;
+            font-size: 0.75rem;
             transition: all 0.3s;
         }
 
@@ -175,7 +141,7 @@
         .btn-surprise {
             background: linear-gradient(135deg, #5C81F6 0%, #9B87F5 100%);
             border: 2px solid #78350f;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 0;
         }
 
@@ -197,7 +163,7 @@
 
         .file-input-label {
             display: block;
-            padding: 0.5rem 0.75rem;
+            padding: 0.45rem 0.6rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
@@ -206,7 +172,7 @@
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .file-input-label:hover {
@@ -225,43 +191,55 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 0.75rem;
+            padding: 1rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             overflow: hidden;
-            width: 220px;
-            flex-shrink: 0;
             aspect-ratio: 1;
+            width: 100%;
         }
 
-        @media (max-width: 768px) {
-            .canvas-container {
+        @media (max-width: 1024px) {
+            body {
                 padding: 0.5rem;
-                width: 100%;
+                min-height: auto;
+            }
+
+            .container {
                 height: auto;
-                aspect-ratio: 1;
             }
-        }
 
-        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.75rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .main-layout {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                overflow: visible;
+            }
+
+            .controls-panel {
+                grid-template-columns: 1fr 1fr;
+                padding: 1rem;
+                height: auto;
+            }
+
             .canvas-container {
                 padding: 0.5rem;
+                aspect-ratio: 1;
+                width: 100%;
             }
         }
 
-        @media (max-height: 800px) {
-            h1 {
-                font-size: 2rem;
-                margin-bottom: 0.75rem;
-            }
-            
+        @media (max-width: 640px) {
             .controls-panel {
-                padding: 1rem;
-                gap: 1rem;
+                grid-template-columns: 1fr;
             }
-            
+
             .control-section {
-                padding-bottom: 1rem;
+                grid-column: 1;
             }
         }
     </style>
@@ -273,18 +251,16 @@
         <div class="main-layout">
             <div class="controls-panel">
                 <div class="control-section">
-                    <h3>colors</h3>
-                    <div class="color-picker-group">
-                        <label for="irisColor">iris color:</label>
-                        <input type="color" id="irisColor" class="color-picker" value="#6ea6ff">
-                    </div>
-                    <div class="color-picker-group">
-                        <label for="bgColor">background:</label>
-                        <input type="color" id="bgColor" class="color-picker" value="#000000">
-                    </div>
+                    <h3>iris color</h3>
+                    <input type="color" id="irisColor" class="color-picker" value="#6ea6ff">
                 </div>
 
                 <div class="control-section">
+                    <h3>background</h3>
+                    <input type="color" id="bgColor" class="color-picker" value="#000000">
+                </div>
+
+                <div class="control-section full-width">
                     <h3>upload song</h3>
                     <div class="file-input-wrapper">
                         <input type="file" id="fileInput" accept="audio/mp3,audio/mpeg,audio/wav,audio/*">
@@ -293,7 +269,7 @@
                     <div class="song-name" id="songName">no song loaded</div>
                 </div>
 
-                <div class="control-section">
+                <div class="control-section full-width">
                     <h3>default songs</h3>
                     <button class="btn btn-surprise" onclick="surpriseMe()">✨ surprise me!</button>
                 </div>
@@ -307,7 +283,7 @@
                 <div class="control-section">
                     <h3>save</h3>
                     <button class="btn btn-secondary" onclick="saveTransparent()">transparent</button>
-                    <button class="btn btn-secondary" onclick="saveBlack()">with background</button>
+                    <button class="btn btn-secondary" onclick="saveWithBg()">with background</button>
                 </div>
             </div>
 
@@ -343,32 +319,28 @@
         }
 
         function setup() {
-            // Make canvas responsive
-            let canvasSize = min(550, windowWidth - 100, windowHeight - 200);
-            if (windowWidth <= 768) {
-                canvasSize = min(windowWidth - 30, windowHeight * 0.6);
-            }
-            let canvas = createCanvas(canvasSize, canvasSize);
+            let container = document.getElementById('canvasContainer');
+            let containerSize = min(container.clientWidth, container.clientHeight) - 32;
+            
+            let canvas = createCanvas(containerSize, containerSize);
             canvas.parent('canvasContainer');
             layer = createGraphics(width, height);
             fft = new p5.FFT(0, 256);
             frameRate(60);
-            loop(); // Change to loop instead of noLoop
-            getAudioContext().suspend();
+            loop();
+            
+            userStartAudio();
 
             // Color pickers
             document.getElementById('irisColor').addEventListener('input', (e) => {
                 const hex = e.target.value;
                 irisColor = hexToRgb(hex);
-                if (!isPlaying) redraw();
             });
 
             document.getElementById('bgColor').addEventListener('input', (e) => {
                 const hex = e.target.value;
                 bgColor = hexToRgb(hex);
-                // Update canvas container background in real-time
                 document.getElementById('canvasContainer').style.backgroundColor = hex;
-                if (!isPlaying) redraw();
             });
 
             // File upload
@@ -379,21 +351,21 @@
         }
 
         function windowResized() {
-            let canvasSize = min(550, windowWidth - 100, windowHeight - 200);
-            if (windowWidth <= 768) {
-                canvasSize = min(windowWidth - 30, windowHeight * 0.6);
-            }
-            resizeCanvas(canvasSize, canvasSize);
+            let container = document.getElementById('canvasContainer');
+            let containerSize = min(container.clientWidth, container.clientHeight) - 32;
+            
+            resizeCanvas(containerSize, containerSize);
+            let oldLayer = layer;
             layer = createGraphics(width, height);
-            redraw();
+            if (oldLayer) {
+                layer.image(oldLayer, 0, 0, width, height);
+            }
         }
 
         function draw() {
-            // Always update background color
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
-                // Just show the layer without text
                 image(layer, 0, 0);
                 return;
             }
@@ -457,9 +429,7 @@
 
             if (isFinished) return;
 
-            if (getAudioContext().state !== 'running') {
-                getAudioContext().resume();
-            }
+            userStartAudio();
 
             if (!isPlaying && !isPaused) {
                 angle = 0;
@@ -488,18 +458,15 @@
             isPaused = false;
             isFinished = false;
             document.getElementById('playPauseBtn').textContent = 'play';
-            redraw();
         }
 
         function saveTransparent() {
-            // Save current layer state without modifying it
             let exportLayer = createGraphics(width, height);
             exportLayer.image(layer, 0, 0);
             save(exportLayer, 'irisgram.png');
         }
 
-        function saveBlack() {
-            // Save current layer state with background
+        function saveWithBg() {
             let bgLayer = createGraphics(width, height);
             bgLayer.background(bgColor.r, bgColor.g, bgColor.b);
             bgLayer.image(layer, 0, 0);
@@ -507,14 +474,11 @@
         }
 
         function handleFileSelect(event) {
-            if (typeof loadSound === 'undefined') {
-                alert('audio library not loaded yet. please wait a moment and try again.');
-                return;
-            }
             const file = event.target.files[0];
             if (file) {
                 if (!file.type.includes('audio')) {
                     alert('please select an audio file (mp3, wav, etc.)');
+                    event.target.value = '';
                     return;
                 }
                 resetSketch();
@@ -523,10 +487,11 @@
                 }
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
-                song = loadSound(fileURL, () => {
+                
+                loadSound(fileURL, (loadedSong) => {
+                    song = loadedSong;
                     currentSongName = file.name;
                     document.getElementById('songName').textContent = file.name;
-                    redraw();
                 }, (err) => {
                     console.error('Failed to load file:', err);
                     document.getElementById('songName').textContent = 'failed to load';
@@ -536,24 +501,21 @@
         }
 
         function surpriseMe() {
-            if (typeof loadSound === 'undefined') {
-                alert('audio library not loaded yet. please wait a moment and try again.');
-                return;
-            }
             resetSketch();
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             if (song) {
                 song.stop();
             }
             document.getElementById('songName').textContent = 'loading...';
-            song = loadSound(randomSong.url, () => {
+            
+            loadSound(randomSong.url, (loadedSong) => {
+                song = loadedSong;
                 currentSongName = randomSong.name;
                 document.getElementById('songName').textContent = randomSong.name;
-                redraw();
             }, (err) => {
                 console.error('Failed to load song:', err);
                 document.getElementById('songName').textContent = 'failed to load';
-                alert('failed to load song. please try uploading your own!');
+                alert('failed to load song. please check that the audio files are in the same folder!');
             });
         }
 
