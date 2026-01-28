@@ -41,26 +41,27 @@
 
         .main-layout {
             display: grid;
-            grid-template-columns: 350px 1fr;
+            grid-template-columns: 400px 1fr;
             gap: 1.5rem;
             flex: 1;
             overflow: hidden;
             min-height: 0;
+            align-items: start;
         }
 
         .controls-panel {
             background: white;
-            padding: 1rem;
+            padding: 1.5rem;
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 0.75rem;
+            gap: 1rem;
             height: fit-content;
         }
 
         .control-section {
-            padding-bottom: 0.75rem;
+            padding-bottom: 1rem;
             border-bottom: 2px solid #fef3c7;
         }
 
@@ -74,11 +75,11 @@
         }
 
         .control-section h3 {
-            font-size: 0.8rem;
+            font-size: 0.875rem;
             font-weight: 900;
             text-transform: lowercase;
             color: #1d4ed8;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.5rem;
         }
 
         .color-picker-group {
@@ -100,7 +101,7 @@
 
         .color-picker {
             width: 100%;
-            height: 32px;
+            height: 35px;
             border: 2px solid #78350f;
             border-radius: 4px;
             cursor: pointer;
@@ -108,15 +109,15 @@
 
         .btn {
             width: 100%;
-            padding: 0.45rem 0.6rem;
+            padding: 0.5rem 0.75rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
             background: #2563eb;
             color: white;
             cursor: pointer;
-            margin-bottom: 0.35rem;
-            font-size: 0.75rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.8rem;
             transition: all 0.3s;
         }
 
@@ -141,7 +142,7 @@
         .btn-surprise {
             background: linear-gradient(135deg, #5C81F6 0%, #9B87F5 100%);
             border: 2px solid #78350f;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             margin-bottom: 0;
         }
 
@@ -163,7 +164,7 @@
 
         .file-input-label {
             display: block;
-            padding: 0.45rem 0.6rem;
+            padding: 0.5rem 0.75rem;
             font-weight: 700;
             text-transform: lowercase;
             border: 2px solid #78350f;
@@ -172,7 +173,7 @@
             cursor: pointer;
             text-align: center;
             transition: all 0.3s;
-            font-size: 0.75rem;
+            font-size: 0.8rem;
         }
 
         .file-input-label:hover {
@@ -195,8 +196,9 @@
             border: 2px solid #78350f;
             box-shadow: 6px 6px 0px rgba(120, 53, 15, 0.15);
             overflow: hidden;
-            aspect-ratio: 1;
             width: 100%;
+            max-width: 100%;
+            aspect-ratio: 1;
         }
 
         @media (max-width: 1024px) {
