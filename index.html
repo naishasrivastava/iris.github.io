@@ -494,7 +494,7 @@
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
             
-            // Ensure full 361 degree rotation for complete circle
+            // Ensure angle reaches exactly 361 by end of song
             angle = progress * 361;
 
             let spectrum = fft.analyze().reverse().slice(40);
@@ -514,7 +514,7 @@
             pop();
 
             // Build iris pattern while playing
-            if (isPlaying && angle <= 361) {
+            if (isPlaying) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -533,8 +533,8 @@
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                // Stop when song ends or circle completes
-                if (angle >= 361 || current >= d) {
+                // Stop only when song ends
+                if (current >= d) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
@@ -544,6 +544,14 @@
             } else {
                 image(layer, 0, 0);
             }
+
+            // Draw center circle (pupil) matching background color
+            push();
+            translate(width / 2, height / 2);
+            fill(bgColor.r, bgColor.g, bgColor.b);
+            noStroke();
+            circle(0, 0, 60);
+            pop();
         }
 
         function handlePlayPause() {
