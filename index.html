@@ -524,7 +524,7 @@
                 layer.push();
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
-                for (let i = 40; i < spectrum.length; i++) {
+                for (let i = 20; i < spectrum.length; i++) {
                     layer.strokeWeight(0.018 * spectrum[i]);
                     layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
                     layer.line(0, i, 0, i);
