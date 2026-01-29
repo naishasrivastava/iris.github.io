@@ -495,7 +495,8 @@
             let progress = constrain(current / d, 0, 1);
             
             // Ensure angle reaches exactly 361 by end of song
-            let spectrum = fft.analyze();
+            let irisMin = 50; // inner radius
+            let irisMax = 200; // outer radius
             push();
             translate(width/2, height/2);
             for (let i = 0; i < spectrum.length; i++) {
