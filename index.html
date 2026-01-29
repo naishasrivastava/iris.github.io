@@ -527,8 +527,7 @@
                 for (let i = 60; i < spectrum.length; i++) {
                     layer.strokeWeight(0.018 * spectrum[i]);
                     layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
-                    let y = map(i, 50, spectrum.length, 50, 150);
-                    layer.line(0, y, 0, y);
+                    layer.line(0, i, 0, i);
                 }
                 layer.pop();
                 
