@@ -519,29 +519,16 @@
             if (isPlaying && angle <= 361) {
                 push();
                 translate(width / 2, height / 2);
-                let density = 4; // 👈 increase this for more density
-
-                for (let a = 0; a < density; a++) {
-                    let localAngle = angle + a * 0.5; // smaller angular steps
+                rotate(radians(angle));
                 
-                    push();
-                    translate(width / 2, height / 2);
-                    rotate(radians(localAngle));
-                
-                    layer.push();
-                    layer.translate(width / 2, height / 2);
-                    layer.rotate(radians(-localAngle));
-                
-                    for (let i = 50; i < spectrum.length; i++) {
-                        layer.strokeWeight(0.018 * spectrum[i]);
-                        layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
-                        layer.line(0, i, 0, i);
-                    }
-                
-                    layer.pop();
-                    pop();
+                layer.push();
+                layer.translate(width / 2, height / 2);
+                layer.rotate(radians(-angle));
+                for (let i = 50; i < spectrum.length; i++) {
+                    layer.strokeWeight(0.018 * spectrum[i]);
+                    layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
+                    layer.line(0, i, 0, i);
                 }
-
                 layer.pop();
                 
                 image(layer, -width / 2, -height / 2);
