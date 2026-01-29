@@ -495,21 +495,11 @@
             let progress = constrain(current / d, 0, 1);
             
             // Ensure angle reaches exactly 361 by end of song
-            let irisMin = 50; // inner radius
-            let irisMax = 200; // outer radius
+            // Increment angle smoothly based on song progress
+            let targetAngle = progress * 361;
+            angle = min(angle + (targetAngle - angle) * 0.2, 361);
+
             let spectrum = fft.analyze().reverse().slice(40);
-            push();
-            translate(width/2, height/2);
-            for (let i = 0; i < spectrum.length; i++) {
-                let angleBin = map(i, 0, spectrum.length, 0, TWO_PI);
-                let radius = map(spectrum[i], 0, 255, irisMin, irisMax);
-                let x = cos(angleBin) * radius;
-                let y = sin(angleBin) * radius;
-                stroke(irisColor.r, irisColor.g, irisColor.b, 150);
-                strokeWeight(2);
-                line(0, 0, x, y);
-            }
-            pop();
 
             // Live spectrum visualization (contrasting waveform)
             push();
