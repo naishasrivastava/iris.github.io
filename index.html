@@ -487,13 +487,6 @@
             
             if (!song || !song.isLoaded()) {
                 image(layer, 0, 0);
-                // Draw center circle matching bg color even when not playing
-                push();
-                translate(width / 2, height / 2);
-                fill(bgColor.r, bgColor.g, bgColor.b);
-                noStroke();
-                circle(0, 0, 60);
-                pop();
                 return;
             }
 
@@ -501,8 +494,8 @@
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
             
-            // Force complete circle - use full 360 regardless of song progress
-            angle = progress * 370;
+            // Ensure full 361 degree rotation for complete circle
+            angle = progress * 361;
 
             let spectrum = fft.analyze().reverse().slice(40);
 
@@ -515,13 +508,13 @@
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
                 let a = spectrum[i];
-                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 180));
+                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 215));
             }
             endShape();
             pop();
 
             // Build iris pattern while playing
-            if (isPlaying) {
+            if (isPlaying && angle <= 361) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -532,15 +525,19 @@
                 for (let i = 0; i < spectrum.length; i++) {
                     layer.strokeWeight(0.018 * spectrum[i]);
                     layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
-                    layer.line(0, map(i, 0, spectrum.length, 30, 180), 0, map(i, 0, spectrum.length, 30, 180));
+                    // Create radial lines from inner radius outward for dense iris texture
+                    let innerRadius = 30;
+                    let outerRadius = 215;
+                    let y = map(i, 0, spectrum.length, innerRadius, outerRadius);
+                    layer.line(0, y, 0, y);
                 }
                 layer.pop();
                 
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                // Stop when song ends
-                if (current >= d) {
+                // Stop when song ends or circle completes
+                if (angle >= 361 || current >= d) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
@@ -550,14 +547,6 @@
             } else {
                 image(layer, 0, 0);
             }
-
-            // Draw center circle matching bg color on top
-            push();
-            translate(width / 2, height / 2);
-            fill(bgColor.r, bgColor.g, bgColor.b);
-            noStroke();
-            circle(0, 0, 80);
-            pop();
         }
 
         function handlePlayPause() {
