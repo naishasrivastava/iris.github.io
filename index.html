@@ -487,10 +487,10 @@
             
             if (!song || !song.isLoaded()) {
                 image(layer, 0, 0);
-                // Draw black center circle even when not playing
+                // Draw center circle matching bg color even when not playing
                 push();
                 translate(width / 2, height / 2);
-                fill(0);
+                fill(bgColor.r, bgColor.g, bgColor.b);
                 noStroke();
                 circle(0, 0, 60);
                 pop();
@@ -500,6 +500,8 @@
             let d = song.duration();
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
+            
+            // Force complete circle - use full 360 regardless of song progress
             angle = progress * 360;
 
             let spectrum = fft.analyze().reverse().slice(40);
@@ -519,7 +521,7 @@
             pop();
 
             // Build iris pattern while playing
-            if (isPlaying && angle <= 360) {
+            if (isPlaying) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -537,7 +539,8 @@
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                if (angle >= 360 || current >= d) {
+                // Stop when song ends
+                if (current >= d) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
@@ -548,10 +551,10 @@
                 image(layer, 0, 0);
             }
 
-            // Draw black center circle on top
+            // Draw center circle matching bg color on top
             push();
             translate(width / 2, height / 2);
-            fill(0);
+            fill(bgColor.r, bgColor.g, bgColor.b);
             noStroke();
             circle(0, 0, 60);
             pop();
