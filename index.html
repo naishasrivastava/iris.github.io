@@ -525,11 +525,8 @@
                 for (let i = 0; i < spectrum.length; i++) {
                     layer.strokeWeight(0.018 * spectrum[i]);
                     layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
-                    // Create radial lines from inner radius outward for dense iris texture
-                    let innerRadius = 30;
-                    let outerRadius = 215;
-                    let y = map(i, 0, spectrum.length, innerRadius, outerRadius);
-                    layer.line(0, y, 0, y);
+                    // Match reference: draw line at position i
+                    layer.line(0, i, 0, i);
                 }
                 layer.pop();
                 
