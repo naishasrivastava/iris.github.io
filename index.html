@@ -497,6 +497,7 @@
             // Ensure angle reaches exactly 361 by end of song
             let irisMin = 50; // inner radius
             let irisMax = 200; // outer radius
+            let spectrum = fft.analyze().reverse().slice(40);
             push();
             translate(width/2, height/2);
             for (let i = 0; i < spectrum.length; i++) {
@@ -509,8 +510,6 @@
                 line(0, 0, x, y);
             }
             pop();
-
-            let spectrum = fft.analyze().reverse().slice(40);
 
             // Live spectrum visualization (contrasting waveform)
             push();
