@@ -495,7 +495,19 @@
             let progress = constrain(current / d, 0, 1);
             
             // Ensure angle reaches exactly 361 by end of song
-            angle = progress * 361;
+            let spectrum = fft.analyze();
+            push();
+            translate(width/2, height/2);
+            for (let i = 0; i < spectrum.length; i++) {
+                let angleBin = map(i, 0, spectrum.length, 0, TWO_PI);
+                let radius = map(spectrum[i], 0, 255, irisMin, irisMax);
+                let x = cos(angleBin) * radius;
+                let y = sin(angleBin) * radius;
+                stroke(irisColor.r, irisColor.g, irisColor.b, 150);
+                strokeWeight(2);
+                line(0, 0, x, y);
+            }
+            pop();
 
             let spectrum = fft.analyze().reverse().slice(40);
 
@@ -522,7 +534,7 @@
                 layer.push();
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
-                for (let i = 50; i < spectrum.length; i++) {
+                for (let i = 40; i < spectrum.length; i++) {
                     layer.strokeWeight(0.018 * spectrum[i]);
                     layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
                     layer.line(0, i, 0, i);
