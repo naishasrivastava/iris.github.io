@@ -494,10 +494,10 @@
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
             
-            // Ensure angle reaches exactly 360 by end of song
+            // Ensure angle reaches exactly 361 by end of song
             // Increment angle smoothly based on song progress
-            let targetAngle = progress * 360;
-            angle = min(angle + (targetAngle - angle) * 0.2, 360);
+            let targetAngle = progress * 361;
+            angle = min(angle + (targetAngle - angle) * 0.2, 361);
 
             let spectrum = fft.analyze().reverse().slice(40);
 
@@ -516,26 +516,39 @@
             pop();
 
             // Build iris pattern while playing
-            if (isPlaying && angle <= 360) {
+            if (isPlaying && angle <= 361) {
                 push();
                 translate(width / 2, height / 2);
-                rotate(radians(angle));
+                let density = 4; // 👈 increase this for more density
+
+                for (let a = 0; a < density; a++) {
+                    let localAngle = angle + a * 0.5; // smaller angular steps
                 
-                layer.push();
-                layer.translate(width / 2, height / 2);
-                layer.rotate(radians(-angle));
-                for (let i = 50; i < spectrum.length; i++) {
-                    layer.strokeWeight(0.018 * spectrum[i]);
-                    layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
-                    layer.line(0, i, 0, i);
+                    push();
+                    translate(width / 2, height / 2);
+                    rotate(radians(localAngle));
+                
+                    layer.push();
+                    layer.translate(width / 2, height / 2);
+                    layer.rotate(radians(-localAngle));
+                
+                    for (let i = 50; i < spectrum.length; i++) {
+                        layer.strokeWeight(0.018 * spectrum[i]);
+                        layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
+                        layer.line(0, i, 0, i);
+                    }
+                
+                    layer.pop();
+                    pop();
                 }
+
                 layer.pop();
                 
                 image(layer, -width / 2, -height / 2);
                 pop();
 
                 // Stop when angle completes or song ends
-                if (angle >= 360 || current >= d) {
+                if (angle >= 361 || current >= d) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
