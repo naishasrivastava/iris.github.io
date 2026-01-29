@@ -502,7 +502,7 @@
             let progress = constrain(current / d, 0, 1);
             
             // Force complete circle - use full 360 regardless of song progress
-            angle = progress * 360;
+            angle = progress * 370;
 
             let spectrum = fft.analyze().reverse().slice(40);
 
@@ -556,7 +556,7 @@
             translate(width / 2, height / 2);
             fill(bgColor.r, bgColor.g, bgColor.b);
             noStroke();
-            circle(0, 0, 60);
+            circle(0, 0, 80);
             pop();
         }
 
