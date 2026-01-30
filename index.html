@@ -406,7 +406,7 @@
 
     <footer>
         <div class="contact-links">
-            <a href="/cdn-cgi/l/email-protection#b8d6cb8a8a8a81f8dbd7cad6ddd4d496dddccd" class="contact-btn email">
+            <a href="mailto:ns2229@cornell.edu" class="contact-btn email">
                 <span>✉</span>
                 <span>email</span>
             </a>
@@ -423,7 +423,7 @@
         <p>© 2026</p>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script>
         let song;
         let fft;
         let angle = 0;
@@ -509,41 +509,31 @@
 
             let d = song.duration();
             let current = song.currentTime();
+            let progress = constrain(current / d, 0, 1);
             
+            // Ensure angle reaches exactly 361.5 by end of song
+            // Increment angle smoothly based on song progress
+            let targetAngle = progress * 361.5;
+            angle = min(angle + (targetAngle - angle) * 0.2, 361.5);
+
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Only show waveform and build iris when actively playing
-            if (isPlaying) {
-                // Live spectrum visualization (contrasting waveform)
-                push();
-                translate(width / 2, height / 2);
-                noFill();
-                stroke(waveformColor);
-                strokeWeight(1);
-                beginShape();
-                for (let i = 0; i < spectrum.length; i++) {
-                    let a = spectrum[i];
-                    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
-                }
-                endShape();
-                pop();
+            // Live spectrum visualization (contrasting waveform)
+            push();
+            translate(width / 2, height / 2);
+            noFill();
+            stroke(waveformColor);
+            strokeWeight(1);
+            beginShape();
+            for (let i = 0; i < spectrum.length; i++) {
+			    let a = spectrum[i];
+			    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
+			}
+            endShape();
+            pop();
 
-                // Build iris pattern while playing
-                // Calculate how much to increment per frame to complete exactly 360 degrees
-                let angleIncrement = 360 / (d * 60);
-                let newAngle = angle + angleIncrement;
-                
-                // Only draw if we haven't completed a full rotation yet
-                let rotationCount = Math.floor(angle / 360);
-                let nextRotationCount = Math.floor(newAngle / 360);
-                
-                // If we're about to complete or exceed the rotation, stop exactly at 360
-                if (nextRotationCount > rotationCount) {
-                    newAngle = (rotationCount + 1) * 360;
-                }
-                
-                angle = newAngle;
-                
+            // Build iris pattern while playing
+            if (isPlaying && angle <= 361.5) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -552,8 +542,8 @@
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
                 for (let i = 50; i < spectrum.length; i++) {
-				    let scaledI = i * irisScale;
-				    layer.strokeWeight(0.018 * spectrum[i] * irisScale);
+				    let scaledI = i * irisScale; // scale distance from center
+				    layer.strokeWeight(0.018 * spectrum[i] * irisScale); // optionally scale stroke too
 				    layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
 				    layer.line(0, scaledI, 0, scaledI);
 				}
@@ -562,17 +552,15 @@
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                // Stop when song ends
-                if (current >= d - 0.05) {
+                // Stop when angle completes or song ends
+                if (angle >= 361.5 || current >= d) {
                     song.stop();
-                    song.jump(0);
                     isPlaying = false;
                     isPaused = false;
                     isFinished = true;
-                    playPauseBtn.textContent = 'play again';
+                    playPauseBtn.textContent = 'play';
                 }
             } else {
-                // When not playing, just show the layer (no waveform)
                 image(layer, 0, 0);
             }
         }
@@ -580,21 +568,21 @@
         function handlePlayPause() {
             if (!song || !song.isLoaded()) return;
 
+            if (isFinished) {
+                resetSketch();
+                isFinished = false;
+            }
+
             if (getAudioContext().state !== 'running') {
                 getAudioContext().resume();
             }
 
             if (!isPlaying && !isPaused) {
-                // Starting fresh - only clear if not finished (i.e., first play or after reset)
-                if (!isFinished) {
-                    angle = 0;
-                    layer.clear();
-                }
-                // If isFinished = true, we keep the existing layer and continue drawing on top
+                angle = 0;
+                layer.clear();
                 song.play();
                 fft.setInput(song);
                 isPlaying = true;
-                isFinished = false;
                 playPauseBtn.textContent = 'pause';
             } else if (isPlaying) {
                 song.pause();
