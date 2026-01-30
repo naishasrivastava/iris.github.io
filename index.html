@@ -528,19 +528,21 @@
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Show straight line when finished or when explicitly set
+            // Show straight line when finished or when explicitly set (always at angle 0)
             if (showStraightLine) {
                 push();
                 translate(width / 2, height / 2);
+                rotate(radians(0)); // Always draw at 0 degrees
                 noFill();
                 stroke(waveformColor);
                 strokeWeight(1);
                 line(0, 30 * irisScale, 0, 215 * irisScale);
                 pop();
             } else {
-                // Live spectrum visualization (contrasting waveform)
+                // Live spectrum visualization (contrasting waveform) - rotates with angle
                 push();
                 translate(width / 2, height / 2);
+                rotate(radians(angle)); // Rotate with current angle
                 noFill();
                 stroke(waveformColor);
                 strokeWeight(1);
