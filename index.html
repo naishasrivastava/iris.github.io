@@ -509,12 +509,12 @@
 
             let d = song.duration();
             let current = song.currentTime();
-            let progress = constrain(current / d, 0, 1);
             
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Live spectrum visualization (contrasting waveform) - only show when playing
+            // Only show waveform and build iris when actively playing
             if (isPlaying) {
+                // Live spectrum visualization (contrasting waveform)
                 push();
                 translate(width / 2, height / 2);
                 noFill();
@@ -527,12 +527,22 @@
                 }
                 endShape();
                 pop();
-            }
 
-            // Build iris pattern while playing
-            if (isPlaying) {
-                // Increment angle continuously - exactly 360 degrees over the duration
-                angle += 360 / (d * 60); // 360 degrees over duration at 60fps
+                // Build iris pattern while playing
+                // Calculate how much to increment per frame to complete exactly 360 degrees
+                let angleIncrement = 360 / (d * 60);
+                let newAngle = angle + angleIncrement;
+                
+                // Only draw if we haven't completed a full rotation yet
+                let rotationCount = Math.floor(angle / 360);
+                let nextRotationCount = Math.floor(newAngle / 360);
+                
+                // If we're about to complete or exceed the rotation, stop exactly at 360
+                if (nextRotationCount > rotationCount) {
+                    newAngle = (rotationCount + 1) * 360;
+                }
+                
+                angle = newAngle;
                 
                 push();
                 translate(width / 2, height / 2);
@@ -542,8 +552,8 @@
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
                 for (let i = 50; i < spectrum.length; i++) {
-				    let scaledI = i * irisScale; // scale distance from center
-				    layer.strokeWeight(0.018 * spectrum[i] * irisScale); // optionally scale stroke too
+				    let scaledI = i * irisScale;
+				    layer.strokeWeight(0.018 * spectrum[i] * irisScale);
 				    layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
 				    layer.line(0, scaledI, 0, scaledI);
 				}
@@ -555,13 +565,14 @@
                 // Stop when song ends
                 if (current >= d - 0.05) {
                     song.stop();
-                    song.jump(0); // Reset to beginning for next play
+                    song.jump(0);
                     isPlaying = false;
                     isPaused = false;
                     isFinished = true;
                     playPauseBtn.textContent = 'play again';
                 }
             } else {
+                // When not playing, just show the layer (no waveform)
                 image(layer, 0, 0);
             }
         }
