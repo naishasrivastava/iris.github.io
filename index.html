@@ -4,10 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>irisgram - audio visualizer</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link rel="alternate icon" type="image/svg+xml" href="favicon.svg">
-    <!-- <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='150' fill='%231d4ed8'%3E★%3C/text%3E%3C/svg%3E"> -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.js"></script>
     <style>
@@ -313,7 +309,7 @@
                 font-size: 2.5rem;
                 margin-bottom: 1.5rem;
             }
-
+            
             .subtitle {
                 font-size: 1rem;
             }
@@ -437,7 +433,6 @@
         let bgColor = { r: 0, g: 0, b: 0 };
         let playPauseBtn;
         let waveformColor = 255; // white or black for contrast
-        let showStraightLine = true;
 
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
@@ -528,14 +523,8 @@
             strokeWeight(1);
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
-                let y = map(i, 0, spectrum.length, 30, 215);
-            
-                if (showStraightLine) {
-                    vertex(0, y); // perfectly straight vertical line
-                } else {
-                    let a = spectrum[i];
-                    vertex(map(a, 0, 256, -2, 2), y);
-                }
+                let a = spectrum[i];
+                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 215));
             }
             endShape();
             pop();
@@ -608,13 +597,10 @@
             layer.clear();
             background(bgColor.r, bgColor.g, bgColor.b);
             if (song) song.stop();
-        
             angle = 0;
             isPlaying = false;
             isPaused = false;
             isFinished = false;
-        
-            showStraightLine = true;
             playPauseBtn.textContent = 'play';
             redraw();
         }
