@@ -436,6 +436,7 @@
         let bgColor = { r: 0, g: 0, b: 0 };
         let playPauseBtn;
         let waveformColor = 255; // white or black for contrast
+		let irisScale = 0.85;
 
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
@@ -526,9 +527,9 @@
             strokeWeight(1);
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
-                let a = spectrum[i];
-                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 215));
-            }
+			    let a = spectrum[i];
+			    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
+			}
             endShape();
             pop();
 
@@ -541,11 +542,11 @@
                 layer.push();
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
-				for (let i = 50; i < spectrum.length; i++) {
-				    layer.strokeWeight(0.018 * spectrum[i]);
+                for (let i = 50; i < spectrum.length; i++) {
+				    let scaledI = i * irisScale; // scale distance from center
+				    layer.strokeWeight(0.018 * spectrum[i] * irisScale); // optionally scale stroke too
 				    layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
-				    let radius = map(i, 50, spectrum.length, 35, 150);  // Maps 50-215 to 35-150
-				    layer.line(0, radius, 0, radius);
+				    layer.line(0, scaledI, 0, scaledI);
 				}
                 layer.pop();
                 
