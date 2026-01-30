@@ -511,11 +511,6 @@
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
             
-            // Ensure angle reaches exactly 361.5 by end of song
-            // Increment angle smoothly based on song progress
-            let targetAngle = progress * 361.5;
-            angle = min(angle + (targetAngle - angle) * 0.2, 361.5);
-
             let spectrum = fft.analyze().reverse().slice(40);
 
             // Live spectrum visualization (contrasting waveform) - only show when playing
@@ -536,6 +531,9 @@
 
             // Build iris pattern while playing
             if (isPlaying) {
+                // Increment angle continuously while playing
+                angle += 361.5 / (d * 60); // increment based on duration and framerate
+                
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -554,8 +552,8 @@
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                // Stop when angle completes or song ends
-                if (angle >= 361.5 || current >= d) {
+                // Stop when song ends
+                if (current >= d - 0.1) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
@@ -674,4 +672,3 @@
     </script>
 </body>
 </html>
-
