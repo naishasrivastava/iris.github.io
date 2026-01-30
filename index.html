@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>irisgram - audio spectrogram visualizer</title>
+    <title>irisgram - audio visualizer</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.js"></script>
     <style>
@@ -433,6 +433,7 @@
         let bgColor = { r: 0, g: 0, b: 0 };
         let playPauseBtn;
         let waveformColor = 255; // white or black for contrast
+        let showStraightLine = true;
 
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
@@ -523,8 +524,13 @@
             strokeWeight(1);
             beginShape();
             for (let i = 0; i < spectrum.length; i++) {
-                let a = spectrum[i];
-                vertex(map(a, 0, 256, -2, 2), map(i, 0, spectrum.length, 30, 215));
+                let y = map(i, 0, spectrum.length, 30, 215);
+            
+                if (showStraightLine) {
+                    vertex(0, y); // perfectly straight vertical line
+                } else {
+                    let a = spectrum[i];
+                    vertex(map(a, 0, 256, -2, 2), y);
                 }
             }
             endShape();
@@ -547,6 +553,7 @@
                 layer.pop();
                 
                 image(layer, -width / 2, -height / 2);
+                pop();
 
                 // Stop when angle completes or song ends
                 if (angle >= 361.5 || current >= d) {
@@ -603,6 +610,7 @@
             isPaused = false;
             isFinished = false;
         
+            showStraightLine = true;
             playPauseBtn.textContent = 'play';
             redraw();
         }
