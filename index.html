@@ -434,7 +434,6 @@
         let playPauseBtn;
         let waveformColor = 255; // white or black for contrast
         let showStraightLine = true;
-        let irisScale = 0.85;
 
         const defaultSongs = [
             { name: "espresso", url: "espresso.mp3" },
@@ -553,13 +552,7 @@
                 }
                 layer.pop();
                 
-                scale(irisScale);
-                image(
-                  layer,
-                  -width / 2 / irisScale,
-                  -height / 2 / irisScale
-                );
-                pop();
+                image(layer, -width / 2, -height / 2);
 
                 // Stop when angle completes or song ends
                 if (angle >= 361.5 || current >= d) {
