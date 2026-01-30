@@ -598,17 +598,30 @@
             }
         }
 
-        function resetSketch() {
-            layer.clear();
-            background(bgColor.r, bgColor.g, bgColor.b);
-            if (song) song.stop();
-            angle = 0;
-            isPlaying = false;
-            isPaused = false;
-            isFinished = false;
-            playPauseBtn.textContent = 'play';
-            redraw();
-        }
+        function drawStraightLine() {
+		    layer.push();
+		    layer.translate(width / 2, height / 2);
+		    layer.strokeWeight(1);
+		    layer.stroke(irisColor.r, irisColor.g, irisColor.b, 100); // slightly transparent
+		    for (let i = 50; i < 256; i++) { // same range as in draw()
+		        let scaledI = i * irisScale;
+		        layer.line(0, scaledI, 0, scaledI);
+		    }
+		    layer.pop();
+		}
+		
+		function resetSketch() {
+		    layer.clear();
+		    background(bgColor.r, bgColor.g, bgColor.b);
+		    drawStraightLine(); // <-- add this
+		    if (song) song.stop();
+		    angle = 0;
+		    isPlaying = false;
+		    isPaused = false;
+		    isFinished = false;
+		    playPauseBtn.textContent = 'play';
+		    redraw();
+		}
 
         function saveTransparent() {
             save(layer, 'irisgram.png');
