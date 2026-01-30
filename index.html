@@ -504,6 +504,14 @@
             
             if (!song || !song.isLoaded()) {
                 image(layer, 0, 0);
+                // Draw straight line when no song is loaded
+                push();
+                translate(width / 2, height / 2);
+                noFill();
+                stroke(waveformColor);
+                strokeWeight(1);
+                line(0, 30 * irisScale, 0, 215 * irisScale);
+                pop();
                 return;
             }
 
@@ -524,12 +532,18 @@
             noFill();
             stroke(waveformColor);
             strokeWeight(1);
-            beginShape();
-            for (let i = 0; i < spectrum.length; i++) {
-			    let a = spectrum[i];
-			    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
-			}
-            endShape();
+            
+            // Draw straight line when not playing, otherwise show spectrum
+            if (!isPlaying) {
+                line(0, 30 * irisScale, 0, 215 * irisScale);
+            } else {
+                beginShape();
+                for (let i = 0; i < spectrum.length; i++) {
+                    let a = spectrum[i];
+                    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
+                }
+                endShape();
+            }
             pop();
 
             // Build iris pattern while playing
