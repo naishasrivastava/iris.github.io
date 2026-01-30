@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>irisgram - audio spectrogram visualizer</title>
     <!-- Favicon -->
-	<link rel="icon" type="image/png" href="favicon.png" sizes="32x32">
+	<link rel="icon" type="image/png" href="favicon.png">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/addons/p5.sound.js"></script>
     <style>
@@ -601,12 +601,7 @@
             layer.clear();
             background(bgColor.r, bgColor.g, bgColor.b);
             if (song) song.stop();
-			if (waveform) {
-		        for (let i = 0; i < waveform.length; i++) {
-		            waveform[i] = 0; // set all values to 0
-		        }
-		    }
-			angle = 0;
+            angle = 0;
             isPlaying = false;
             isPaused = false;
             isFinished = false;
