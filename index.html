@@ -595,7 +595,7 @@
             }
 
             if (!isPlaying && !isPaused) {
-                // Starting fresh - don't reset angle or clear layer
+                // Starting fresh - don't clear layer, allow drawing on top
                 song.play();
                 fft.setInput(song);
                 isPlaying = true;
@@ -652,7 +652,6 @@
                 isPlaying = false;
                 isPaused = false;
                 isFinished = false;
-                // Keep showStraightLine as is - don't reset it
                 playPauseBtn.textContent = 'play';
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
@@ -677,7 +676,6 @@
             isPlaying = false;
             isPaused = false;
             isFinished = false;
-            // Keep showStraightLine as is - don't reset it
             playPauseBtn.textContent = 'play';
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             document.getElementById('songName').textContent = 'loading...';
