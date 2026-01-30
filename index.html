@@ -531,8 +531,8 @@
 
             // Build iris pattern while playing
             if (isPlaying) {
-                // Increment angle continuously while playing
-                angle += 361.5 / (d * 60); // increment based on duration and framerate
+                // Increment angle continuously - exactly 360 degrees over the duration
+                angle += 360 / (d * 60); // 360 degrees over duration at 60fps
                 
                 push();
                 translate(width / 2, height / 2);
@@ -553,8 +553,9 @@
                 pop();
 
                 // Stop when song ends
-                if (current >= d - 0.1) {
+                if (current >= d - 0.05) {
                     song.stop();
+                    song.jump(0); // Reset to beginning for next play
                     isPlaying = false;
                     isPaused = false;
                     isFinished = true;
