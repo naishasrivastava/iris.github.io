@@ -646,15 +646,21 @@
                     alert('please select an audio file');
                     return;
                 }
-                resetSketch();
-                showStraightLine = false;
+                layer.clear();
                 if (song) song.stop();
+                angle = 0;
+                isPlaying = false;
+                isPaused = false;
+                isFinished = false;
+                // Keep showStraightLine as is - don't reset it
+                playPauseBtn.textContent = 'play';
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
                 song = loadSound(fileURL, () => {
                     document.getElementById('songName').textContent = file.name.toLowerCase();
                     fft.setInput(song);
                     playPauseBtn.disabled = false;
+                    showStraightLine = true; // Show line once song is loaded
                     redraw();
                 }, (err) => {
                     console.error('failed to load file:', err);
@@ -665,15 +671,21 @@
         }
 
         function surpriseMe() {
-            resetSketch();
-            showStraightLine = false;
-            const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
+            layer.clear();
             if (song) song.stop();
+            angle = 0;
+            isPlaying = false;
+            isPaused = false;
+            isFinished = false;
+            // Keep showStraightLine as is - don't reset it
+            playPauseBtn.textContent = 'play';
+            const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             document.getElementById('songName').textContent = 'loading...';
             song = loadSound(randomSong.url, () => {
                 document.getElementById('songName').textContent = randomSong.name;
                 fft.setInput(song);
                 playPauseBtn.disabled = false;
+                showStraightLine = true; // Show line once song is loaded
                 redraw();
             }, (err) => {
                 console.error('failed to load song:', err);
