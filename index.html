@@ -431,7 +431,6 @@
         let isPlaying = false;
         let isPaused = false;
         let isFinished = false;
-        let hasReset = false;
         let irisColor = { r: 110, g: 166, b: 255 };
         let bgColor = { r: 0, g: 0, b: 0 };
         let playPauseBtn;
@@ -504,16 +503,6 @@
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
-                // Show straight line only after reset
-                if (hasReset) {
-                    push();
-                    translate(width / 2, height / 2);
-                    noFill();
-                    stroke(waveformColor);
-                    strokeWeight(1);
-                    line(0, 30 * irisScale, 0, 215 * irisScale);
-                    pop();
-                }
                 image(layer, 0, 0);
                 return;
             }
@@ -522,6 +511,7 @@
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
             
+            // Ensure angle reaches exactly 361.5 by end of song
             // Increment angle smoothly based on song progress
             let targetAngle = progress * 361.5;
             angle = min(angle + (targetAngle - angle) * 0.2, 361.5);
@@ -543,7 +533,7 @@
             pop();
 
             // Build iris pattern while playing
-            if (isPlaying) {
+            if (isPlaying && angle <= 361.5) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -562,8 +552,8 @@
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                // Check if song ended
-                if (current >= d - 0.1) {
+                // Stop when angle completes or song ends
+                if (angle >= 361.5 || current >= d) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
@@ -578,17 +568,21 @@
         function handlePlayPause() {
             if (!song || !song.isLoaded()) return;
 
+            if (isFinished) {
+                resetSketch();
+                isFinished = false;
+            }
+
             if (getAudioContext().state !== 'running') {
                 getAudioContext().resume();
             }
 
             if (!isPlaying && !isPaused) {
-                // Starting fresh - don't reset angle or clear layer
+                angle = 0;
+                layer.clear();
                 song.play();
                 fft.setInput(song);
                 isPlaying = true;
-                isFinished = false;
-                hasReset = false;
                 playPauseBtn.textContent = 'pause';
             } else if (isPlaying) {
                 song.pause();
@@ -611,7 +605,6 @@
             isPlaying = false;
             isPaused = false;
             isFinished = false;
-            hasReset = true;
             playPauseBtn.textContent = 'play';
             redraw();
         }
@@ -635,7 +628,6 @@
                     return;
                 }
                 resetSketch();
-                hasReset = false;
                 if (song) song.stop();
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
@@ -654,7 +646,6 @@
 
         function surpriseMe() {
             resetSketch();
-            hasReset = false;
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             if (song) song.stop();
             document.getElementById('songName').textContent = 'loading...';
@@ -681,3 +672,4 @@
     </script>
 </body>
 </html>
+
