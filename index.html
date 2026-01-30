@@ -667,4 +667,11 @@
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? {
                 r: parseInt(result[1], 16),
-                g: par
+                g: parseInt(result[2], 16),
+                b: parseInt(result[3], 16)
+            } : { r: 110, g: 166, b: 255 };
+        }
+    </script>
+</body>
+</html>
+
