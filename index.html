@@ -431,6 +431,7 @@
         let isPlaying = false;
         let isPaused = false;
         let isFinished = false;
+        let hasReset = false;
         let irisColor = { r: 110, g: 166, b: 255 };
         let bgColor = { r: 0, g: 0, b: 0 };
         let playPauseBtn;
@@ -503,14 +504,16 @@
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
-                // Show straight line when no song or after reset
-                push();
-                translate(width / 2, height / 2);
-                noFill();
-                stroke(waveformColor);
-                strokeWeight(1);
-                line(0, 30 * irisScale, 0, 215 * irisScale);
-                pop();
+                // Show straight line only after reset
+                if (hasReset) {
+                    push();
+                    translate(width / 2, height / 2);
+                    noFill();
+                    stroke(waveformColor);
+                    strokeWeight(1);
+                    line(0, 30 * irisScale, 0, 215 * irisScale);
+                    pop();
+                }
                 image(layer, 0, 0);
                 return;
             }
@@ -585,6 +588,7 @@
                 fft.setInput(song);
                 isPlaying = true;
                 isFinished = false;
+                hasReset = false;
                 playPauseBtn.textContent = 'pause';
             } else if (isPlaying) {
                 song.pause();
@@ -607,6 +611,7 @@
             isPlaying = false;
             isPaused = false;
             isFinished = false;
+            hasReset = true;
             playPauseBtn.textContent = 'play';
             redraw();
         }
@@ -630,6 +635,7 @@
                     return;
                 }
                 resetSketch();
+                hasReset = false;
                 if (song) song.stop();
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
@@ -648,6 +654,7 @@
 
         function surpriseMe() {
             resetSketch();
+            hasReset = false;
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             if (song) song.stop();
             document.getElementById('songName').textContent = 'loading...';
