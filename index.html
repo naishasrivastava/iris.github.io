@@ -406,7 +406,7 @@
 
     <footer>
         <div class="contact-links">
-            <a href="mailto:ns2229@cornell.edu" class="contact-btn email">
+            <a href="/cdn-cgi/l/email-protection#b8d6cb8a8a8a81f8dbd7cad6ddd4d496dddccd" class="contact-btn email">
                 <span>✉</span>
                 <span>email</span>
             </a>
@@ -423,7 +423,7 @@
         <p>© 2026</p>
     </footer>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         let song;
         let fft;
         let angle = 0;
@@ -560,7 +560,7 @@
                     isPlaying = false;
                     isPaused = false;
                     isFinished = true;
-                    playPauseBtn.textContent = 'play';
+                    playPauseBtn.textContent = 'play again';
                 }
             } else {
                 image(layer, 0, 0);
@@ -575,13 +575,12 @@
             }
 
             if (!isPlaying && !isPaused) {
-                // Starting fresh or replaying after finish
+                // Starting fresh - only clear if not finished (i.e., first play or after reset)
                 if (!isFinished) {
-                    // First play - reset everything
                     angle = 0;
                     layer.clear();
                 }
-                // If isFinished = true, we keep the existing layer and continue drawing
+                // If isFinished = true, we keep the existing layer and continue drawing on top
                 song.play();
                 fft.setInput(song);
                 isPlaying = true;
@@ -668,10 +667,4 @@
             const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
             return result ? {
                 r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : { r: 110, g: 166, b: 255 };
-        }
-    </script>
-</body>
-</html>
+                g: par
