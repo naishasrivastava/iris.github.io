@@ -518,22 +518,24 @@
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Live spectrum visualization (contrasting waveform)
-            push();
-            translate(width / 2, height / 2);
-            noFill();
-            stroke(waveformColor);
-            strokeWeight(1);
-            beginShape();
-            for (let i = 0; i < spectrum.length; i++) {
-			    let a = spectrum[i];
-			    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
-			}
-            endShape();
-            pop();
+            // Live spectrum visualization (contrasting waveform) - only show when playing
+            if (isPlaying) {
+                push();
+                translate(width / 2, height / 2);
+                noFill();
+                stroke(waveformColor);
+                strokeWeight(1);
+                beginShape();
+                for (let i = 0; i < spectrum.length; i++) {
+                    let a = spectrum[i];
+                    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
+                }
+                endShape();
+                pop();
+            }
 
             // Build iris pattern while playing
-            if (isPlaying && angle <= 361.5) {
+            if (isPlaying) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -568,21 +570,22 @@
         function handlePlayPause() {
             if (!song || !song.isLoaded()) return;
 
-            if (isFinished) {
-                resetSketch();
-                isFinished = false;
-            }
-
             if (getAudioContext().state !== 'running') {
                 getAudioContext().resume();
             }
 
             if (!isPlaying && !isPaused) {
-                angle = 0;
-                layer.clear();
+                // Starting fresh or replaying after finish
+                if (!isFinished) {
+                    // First play - reset everything
+                    angle = 0;
+                    layer.clear();
+                }
+                // If isFinished = true, we keep the existing layer and continue drawing
                 song.play();
                 fft.setInput(song);
                 isPlaying = true;
+                isFinished = false;
                 playPauseBtn.textContent = 'pause';
             } else if (isPlaying) {
                 song.pause();
