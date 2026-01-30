@@ -619,7 +619,7 @@
             layer.clear();
             background(bgColor.r, bgColor.g, bgColor.b);
             if (song) song.stop();
-            angle = 0;
+            // Don't reset angle to 0 - keep it where it is
             isPlaying = false;
             isPaused = false;
             isFinished = false;
@@ -648,7 +648,7 @@
                 }
                 layer.clear();
                 if (song) song.stop();
-                angle = 0;
+                // Don't reset angle to 0 - keep it where it is
                 isPlaying = false;
                 isPaused = false;
                 isFinished = false;
@@ -672,7 +672,7 @@
         function surpriseMe() {
             layer.clear();
             if (song) song.stop();
-            angle = 0;
+            // Don't reset angle to 0 - keep it where it is
             isPlaying = false;
             isPaused = false;
             isFinished = false;
