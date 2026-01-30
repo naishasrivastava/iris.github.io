@@ -431,6 +431,7 @@
         let isPlaying = false;
         let isPaused = false;
         let isFinished = false;
+        let showStraightLine = false;
         let irisColor = { r: 110, g: 166, b: 255 };
         let bgColor = { r: 0, g: 0, b: 0 };
         let playPauseBtn;
@@ -485,7 +486,7 @@
 
             // Redraw interval
             setInterval(() => {
-                if (isPlaying) redraw();
+                if (isPlaying || showStraightLine) redraw();
             }, 1000 / 60);
         }
 
@@ -503,6 +504,16 @@
             background(bgColor.r, bgColor.g, bgColor.b);
             
             if (!song || !song.isLoaded()) {
+                // Show straight line only if showStraightLine is true (after reset)
+                if (showStraightLine) {
+                    push();
+                    translate(width / 2, height / 2);
+                    noFill();
+                    stroke(waveformColor);
+                    strokeWeight(1);
+                    line(0, 30 * irisScale, 0, 215 * irisScale);
+                    pop();
+                }
                 image(layer, 0, 0);
                 return;
             }
@@ -511,29 +522,39 @@
             let current = song.currentTime();
             let progress = constrain(current / d, 0, 1);
             
-            // Ensure angle reaches exactly 361.5 by end of song
             // Increment angle smoothly based on song progress
             let targetAngle = progress * 361.5;
             angle = min(angle + (targetAngle - angle) * 0.2, 361.5);
 
             let spectrum = fft.analyze().reverse().slice(40);
 
-            // Live spectrum visualization (contrasting waveform)
-            push();
-            translate(width / 2, height / 2);
-            noFill();
-            stroke(waveformColor);
-            strokeWeight(1);
-            beginShape();
-            for (let i = 0; i < spectrum.length; i++) {
-			    let a = spectrum[i];
-			    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
-			}
-            endShape();
-            pop();
+            // Show straight line when finished or when explicitly set
+            if (showStraightLine) {
+                push();
+                translate(width / 2, height / 2);
+                noFill();
+                stroke(waveformColor);
+                strokeWeight(1);
+                line(0, 30 * irisScale, 0, 215 * irisScale);
+                pop();
+            } else {
+                // Live spectrum visualization (contrasting waveform)
+                push();
+                translate(width / 2, height / 2);
+                noFill();
+                stroke(waveformColor);
+                strokeWeight(1);
+                beginShape();
+                for (let i = 0; i < spectrum.length; i++) {
+                    let a = spectrum[i];
+                    vertex(map(a, 0, 256, -2 * irisScale, 2 * irisScale), map(i, 0, spectrum.length, 30 * irisScale, 215 * irisScale));
+                }
+                endShape();
+                pop();
+            }
 
             // Build iris pattern while playing
-            if (isPlaying && angle <= 361.5) {
+            if (isPlaying) {
                 push();
                 translate(width / 2, height / 2);
                 rotate(radians(angle));
@@ -542,8 +563,8 @@
                 layer.translate(width / 2, height / 2);
                 layer.rotate(radians(-angle));
                 for (let i = 50; i < spectrum.length; i++) {
-				    let scaledI = i * irisScale; // scale distance from center
-				    layer.strokeWeight(0.018 * spectrum[i] * irisScale); // optionally scale stroke too
+				    let scaledI = i * irisScale;
+				    layer.strokeWeight(0.018 * spectrum[i] * irisScale);
 				    layer.stroke(irisColor.r, irisColor.g, irisColor.b, spectrum[i] / 40);
 				    layer.line(0, scaledI, 0, scaledI);
 				}
@@ -552,12 +573,13 @@
                 image(layer, -width / 2, -height / 2);
                 pop();
 
-                // Stop when angle completes or song ends
-                if (angle >= 361.5 || current >= d) {
+                // Check if song ended
+                if (current >= d - 0.1) {
                     song.stop();
                     isPlaying = false;
                     isPaused = false;
                     isFinished = true;
+                    showStraightLine = true;
                     playPauseBtn.textContent = 'play';
                 }
             } else {
@@ -568,21 +590,17 @@
         function handlePlayPause() {
             if (!song || !song.isLoaded()) return;
 
-            if (isFinished) {
-                resetSketch();
-                isFinished = false;
-            }
-
             if (getAudioContext().state !== 'running') {
                 getAudioContext().resume();
             }
 
             if (!isPlaying && !isPaused) {
-                angle = 0;
-                layer.clear();
+                // Starting fresh - don't reset angle or clear layer
                 song.play();
                 fft.setInput(song);
                 isPlaying = true;
+                isFinished = false;
+                showStraightLine = false;
                 playPauseBtn.textContent = 'pause';
             } else if (isPlaying) {
                 song.pause();
@@ -605,6 +623,7 @@
             isPlaying = false;
             isPaused = false;
             isFinished = false;
+            showStraightLine = song && song.isLoaded(); // Only show line if there's a song
             playPauseBtn.textContent = 'play';
             redraw();
         }
@@ -628,6 +647,7 @@
                     return;
                 }
                 resetSketch();
+                showStraightLine = false;
                 if (song) song.stop();
                 document.getElementById('songName').textContent = 'loading...';
                 const fileURL = URL.createObjectURL(file);
@@ -646,6 +666,7 @@
 
         function surpriseMe() {
             resetSketch();
+            showStraightLine = false;
             const randomSong = defaultSongs[Math.floor(Math.random() * defaultSongs.length)];
             if (song) song.stop();
             document.getElementById('songName').textContent = 'loading...';
@@ -672,4 +693,3 @@
     </script>
 </body>
 </html>
-
